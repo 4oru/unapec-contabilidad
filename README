@@ -1,79 +1,74 @@
-
 # 📊 Sistema de Contabilidad Central - UNAPEC
 
-Este proyecto es el núcleo del sistema de integración. Proporciona los servicios necesarios para que los módulos externos (**Nómina, Facturación, Inventario**, etc.) registren sus transacciones contables.
+Este proyecto representa el **núcleo del sistema de integración** para la asignatura de Integración de Aplicaciones. Su función principal es actuar como un "Libro Mayor" centralizado, exponiendo servicios REST para que módulos externos (**Nómina, Facturación, Inventario**, etc.) registren sus movimientos contables de forma estandarizada.
 
 ---
 
-## 🛠️ Requisitos Previos
+## 🛠️ Stack Tecnológico
 
-Antes de empezar, asegúrate de tener instalado:
-
-* **Java 21** (JDK)
-* **Docker & Docker Compose**
-* **Maven** (o usa el wrapper `./mvnw` incluido)
-* Un cliente SQL como **DBeaver** (opcional)
+* **Lenguaje:** Java 21
+* **Framework:** Spring Boot 3.4.x
+* **Base de Datos:** PostgreSQL 16
+* **Persistencia:** Spring Data JPA + Flyway (Migraciones)
+* **Contenedores:** Docker & Docker Compose
 
 ---
 
 ## 🚀 Guía de Inicio Rápido
 
-### 1. Levantar la Base de Datos (Docker)
+### 1. Infraestructura (Docker)
 
-Primero, debemos encender el contenedor de PostgreSQL.
+El proyecto utiliza una instancia de PostgreSQL configurada para correr en un puerto específico para evitar conflictos.
 
-1. Abre una terminal en la carpeta raíz del proyecto.
-2. Navega a la carpeta de Docker: `cd Docker`
-3. Ejecuta:
+1. Navega a la carpeta de configuración: `cd Docker`
+2. Levanta el contenedor:
+
 ```bash
 docker-compose up -d
 
 ```
 
+> **Conexión:** La base de datos estará disponible en el puerto **5434**.
 
+### 2. Configuración del Entorno
 
-> **Nota:** La base de datos estará disponible en el puerto **5434**.
+Antes de correr el backend, verifica las credenciales en `backend-contabilidad/src/main/resources/application.yml`:
 
-### 2. Configuración del Backend
+| Propiedad | Valor |
+| --- | --- |
+| **URL** | `jdbc:postgresql://localhost:5434/contabilidad_db` |
+| **Usuario** | `USER_DB` |
+| **Password** | `2026DB` |
 
-Entra a la carpeta del backend y configura el archivo de propiedades:
+### 3. Ejecución del Backend
 
-1. Ve a `backend-contabilidad/src/main/resources/`.
-2. Asegúrate de que el archivo `application.yml` (o `.properties`) apunte al puerto **5434** y use las credenciales:
-* **User:** `USER_DB`
-* **Password:** `2026DB`
-
-
-
-### 3. Correr la Aplicación
-
-Vuelve a la carpeta `backend-contabilidad` y ejecuta:
+Desde la raíz de la carpeta `backend-contabilidad`:
 
 ```bash
+# Usando el wrapper de Maven incluido
 ./mvnw spring-boot:run
 
 ```
 
-Al iniciar, **Flyway** detectará automáticamente los scripts en `db/migration` y creará las tablas y datos maestros (Auxiliares).
+*Nota: Flyway ejecutará automáticamente los scripts en `src/main/resources/db/migration` para crear las tablas y catálogos necesarios.*
 
 ---
 
-## 🔌 Guía de Integración para otros Módulos
+## 🔌 Guía de Integración (API REST)
 
-Si eres parte del equipo de **Nómina, Facturación o Inventario**, debes enviar tus transacciones a nuestro Web Service.
+Para los equipos de módulos externos, el punto de entrada principal es el registro de asientos contables.
 
-### Endpoint de Registro de Asientos
+### Registro de Asientos
 
-* **URL:** `POST /api/asientos`
-* **Formato:** JSON
+* **Método:** `POST`
+* **Endpoint:** `/api/asientos`
+* **Content-Type:** `application/json`
 
-#### Ejemplo de Cuerpo (JSON):
-
-Los campos en **negrita** son obligatorios. Los rojos son calculados por nosotros.
+#### Estructura del JSON:
 
 ```json
 {
-  "descripcion": "Registro de nómina mensual Marzo 2026",
+  "descripcion": "Registro de nómina mensual - Marzo 2026",
   "auxiliarId": 2,
   "monto": 150000.00,
   "detalles": [
@@ -89,15 +84,21 @@ Los campos en **negrita** son obligatorios. Los rojos son calculados por nosotro
 
 ---
 
-## 📂 Estructura del Repositorio
+## 📂 Estructura del Proyecto
 
-* **`/backend-contabilidad`**: Código fuente en Spring Boot 3.4.x.
-* **`/Docker`**: Archivos de configuración para el entorno de base de datos.
-* **`/db-scripts`**: Respaldos de los scripts SQL de creación y población.
-* **`.gitignore`**: Archivos excluidos del control de versiones.
+```text
+📂 Contabilidad
+├── 📂 backend-contabilidad  # API REST construida con Spring Boot
+├── 📂 DB Scripts            # Respaldos y scripts SQL adicionales
+├── 📂 Docker                # Orquestación de contenedores (PostgreSQL)
+└── 📄 .gitignore            # Exclusiones de Git (target, .env, etc.)
+
+```
 
 ---
 
 ## 👨‍💻 Autor
 
-* **Alan Roman** -
+* **Alan Roman**
+* *Estudiante de Ingeniería de Software - UNAPEC*
+* **ID:** A00116751
