@@ -1,6 +1,11 @@
----
 
+```markdown
 # 📊 Sistema de Contabilidad Central - UNAPEC
+
+![Java](https://img.shields.io/badge/Java-21-orange?style=flat-square&logo=java)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.x-brightgreen?style=flat-square&logo=springboot)
+![Docker](https://img.shields.io/badge/Docker-Ready-blue?style=flat-square&logo=docker)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?style=flat-square&logo=postgresql)
 
 Este proyecto representa el **núcleo del sistema de integración** para la asignatura de Integración de Aplicaciones. Su función principal es actuar como un "Libro Mayor" centralizado, exponiendo servicios REST para que módulos externos (**Nómina, Facturación, Inventario**, etc.) registren sus movimientos contables de forma estandarizada.
 
@@ -29,9 +34,7 @@ docker-compose up -d
 
 ```
 
-
-
-> **Conexión:** La base de datos estará disponible en el puerto `5434`.
+> **Conexión:** La base de datos estará disponible en el puerto **5434**.
 
 ### 2. Configuración del Entorno
 
@@ -106,6 +109,4 @@ Para los equipos de módulos externos, el punto de entrada principal es el regis
 * *Estudiante de Ingeniería de Software - UNAPEC*
 * **ID:** A00116751
 
----
-
-¿Te gustaría que añada una sección de **"Próximos Pasos"** o una tabla con la lista de **Cuentas Contables** disponibles para que tus compañeros sepan qué IDs usar?
+```
