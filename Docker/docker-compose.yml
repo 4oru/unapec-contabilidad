@@ -1,0 +1,13 @@
+services:
+  db-contabilidad:
+    image: postgres:latest
+    container_name: postgres-contabilidad
+    restart: always
+    environment:
+      - POSTGRES_USER=USER_DB
+      - POSTGRES_PASSWORD=2026DB
+      - POSTGRES_DB=contabilidad_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql # <-- Cambio clave aquí

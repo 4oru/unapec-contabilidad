@@ -1,0 +1,103 @@
+
+# 📊 Sistema de Contabilidad Central - UNAPEC
+
+Este proyecto es el núcleo del sistema de integración. Proporciona los servicios necesarios para que los módulos externos (**Nómina, Facturación, Inventario**, etc.) registren sus transacciones contables.
+
+---
+
+## 🛠️ Requisitos Previos
+
+Antes de empezar, asegúrate de tener instalado:
+
+* **Java 21** (JDK)
+* **Docker & Docker Compose**
+* **Maven** (o usa el wrapper `./mvnw` incluido)
+* Un cliente SQL como **DBeaver** (opcional)
+
+---
+
+## 🚀 Guía de Inicio Rápido
+
+### 1. Levantar la Base de Datos (Docker)
+
+Primero, debemos encender el contenedor de PostgreSQL.
+
+1. Abre una terminal en la carpeta raíz del proyecto.
+2. Navega a la carpeta de Docker: `cd Docker`
+3. Ejecuta:
+```bash
+docker-compose up -d
+
+```
+
+
+
+> **Nota:** La base de datos estará disponible en el puerto **5434**.
+
+### 2. Configuración del Backend
+
+Entra a la carpeta del backend y configura el archivo de propiedades:
+
+1. Ve a `backend-contabilidad/src/main/resources/`.
+2. Asegúrate de que el archivo `application.yml` (o `.properties`) apunte al puerto **5434** y use las credenciales:
+* **User:** `USER_DB`
+* **Password:** `2026DB`
+
+
+
+### 3. Correr la Aplicación
+
+Vuelve a la carpeta `backend-contabilidad` y ejecuta:
+
+```bash
+./mvnw spring-boot:run
+
+```
+
+Al iniciar, **Flyway** detectará automáticamente los scripts en `db/migration` y creará las tablas y datos maestros (Auxiliares).
+
+---
+
+## 🔌 Guía de Integración para otros Módulos
+
+Si eres parte del equipo de **Nómina, Facturación o Inventario**, debes enviar tus transacciones a nuestro Web Service.
+
+### Endpoint de Registro de Asientos
+
+* **URL:** `POST /api/asientos`
+* **Formato:** JSON
+
+#### Ejemplo de Cuerpo (JSON):
+
+Los campos en **negrita** son obligatorios. Los rojos son calculados por nosotros.
+
+```json
+{
+  "descripcion": "Registro de nómina mensual Marzo 2026",
+  "auxiliarId": 2,
+  "monto": 150000.00,
+  "detalles": [
+    {
+      "cuentaId": 101,
+      "tipoMovimiento": "Debito",
+      "monto": 150000.00
+    }
+  ]
+}
+
+```
+
+---
+
+## 📂 Estructura del Repositorio
+
+* **`/backend-contabilidad`**: Código fuente en Spring Boot 3.4.x.
+* **`/Docker`**: Archivos de configuración para el entorno de base de datos.
+* **`/db-scripts`**: Respaldos de los scripts SQL de creación y población.
+* **`.gitignore`**: Archivos excluidos del control de versiones.
+
+---
+
+## 👨‍💻 Autor
+
+* **Alan Roman** -

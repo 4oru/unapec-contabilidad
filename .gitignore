@@ -1,0 +1,42 @@
+### --- Java & Maven ---
+target/
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+### --- Spring Boot ---
+.mvn/wrapper/maven-wrapper.jar
+application-local.properties
+application-local.yml
+.help
+
+### --- IDEs & Editors ---
+# Zed Editor
+.zed/
+settings.json
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code
+.vscode/
+
+### --- Operating System ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+### --- Docker & DB ---
+# Ignorar datos locales de la base de datos si usas volúmenes locales
+postgres-data/
+.env
+
+### --- Logs ---
+*.log
+logs/
