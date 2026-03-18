@@ -95,7 +95,7 @@ export default function TipoCuentaFormModal({ open, onClose, onSuccess, initialD
       open={open}
       onClose={onClose}
       title={initialData ? "Editar Tipo de Cuenta" : "Nuevo Tipo de Cuenta"}
-      subtitle="Definición de rubros contables (Activos, Pasivos, Ingresos...)"
+      subtitle="Definición de tipos contables (Activos, Pasivos, Ingresos...)"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         {apiError && (

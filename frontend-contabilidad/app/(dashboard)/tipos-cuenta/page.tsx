@@ -100,7 +100,7 @@ export default function TiposCuentaPage() {
 
   return (
     <div className="flex flex-col h-full">
-      <Header title="Tipos de Cuenta" subtitle="Clasificadores y Rubros Contables base" />
+      <Header title="Tipos de Cuenta" subtitle="Clasificadores y Tipos Contables base" />
 
       <div className="flex-1 p-8 space-y-5">
         <div className="flex items-center justify-end gap-2">

@@ -6,6 +6,8 @@
 CREATE TABLE monedas_t (
     id SERIAL PRIMARY KEY,
     codigo_iso VARCHAR(3) NOT NULL UNIQUE,
+    simbolo VARCHAR(2) NOT NULL,
+    nombre VARCHAR(50) NOT NULL,
     descripcion VARCHAR(100) NOT NULL,
     tasa_cambio DECIMAL(12, 4) NOT NULL DEFAULT 1.0000,
     estado BOOLEAN DEFAULT TRUE,
