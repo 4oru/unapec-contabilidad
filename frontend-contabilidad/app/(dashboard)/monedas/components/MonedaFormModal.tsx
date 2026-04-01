@@ -14,6 +14,7 @@ const schema = z.object({
     .string()
     .length(3, "El código ISO debe tener exactamente 3 caracteres")
     .toUpperCase(),
+  simbolo: z.string().min(1, "El símbolo es obligatorio").max(10),
   nombre: z.string().min(1, "El nombre es obligatorio").max(100),
   descripcion: z.string().min(1, "La descripción es obligatoria").max(255),
   tasaCambio: z
@@ -70,6 +71,7 @@ export default function MonedaFormModal({ open, onClose, onSuccess, initialData 
       if (initialData) {
         reset({
           codigoIso: initialData.codigoIso,
+          simbolo: initialData.simbolo,   // ← agregar
           nombre: initialData.nombre,
           descripcion: initialData.descripcion || "",
           tasaCambio: initialData.tasaCambio,
@@ -139,6 +141,18 @@ export default function MonedaFormModal({ open, onClose, onSuccess, initialData 
               {estadoValue ? "Activo" : "Inactivo"}
             </button>
           </div>
+        </div>
+
+        {/* Símbolo */}
+        <div>
+          <label className={labelClass}>Símbolo</label>
+          <input
+            {...register("simbolo")}
+            placeholder="RD$"
+            maxLength={10}
+            className={inputClass}
+          />
+          {errors.simbolo && <p className={errorClass}>{errors.simbolo.message}</p>}
         </div>
 
         {/* Nombre */}

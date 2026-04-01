@@ -27,6 +27,12 @@ public class Moneda {
     @io.swagger.v3.oas.annotations.media.Schema(description = "Nombre de la moneda", example = "Dólar")
     private String nombre;
 
+    @NotBlank(message = "El símbolo es obligatorio")
+    @Size(max = 10, message = "El símbolo no puede tener más de 10 caracteres")
+    @Column(name = "simbolo")
+    @io.swagger.v3.oas.annotations.media.Schema(description = "Símbolo de la moneda", example = "RD$")
+    private String simbolo;
+
     // --- EL CAMPO QUE FALTABA ---
     @NotBlank(message = "La descripción es obligatoria")
     @Column(name = "descripcion") 

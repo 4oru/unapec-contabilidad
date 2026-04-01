@@ -18,12 +18,19 @@ const TIPO_COLORS: Record<TipoCuenta, string> = {
   GASTO:      "bg-orange-50 text-orange-700",
 };
 
+function getTipoNombre(tipo: any): string {
+  if (!tipo) return "";
+  if (typeof tipo === "string") return tipo.toUpperCase();
+  return (tipo?.nombre || "").toUpperCase();
+}
+
 function saldoStr(saldo: number) {
-  return new Intl.NumberFormat("es-DO", { style: "currency", currency: "DOP", minimumFractionDigits: 2 }).format(saldo);
+  const val = typeof saldo === "number" && !isNaN(saldo) ? saldo : 0;
+  return new Intl.NumberFormat("es-DO", { style: "currency", currency: "DOP", minimumFractionDigits: 2 }).format(val);
 }
 
 function getRecursiveSaldo(cuenta: CuentaContable, allCuentas: CuentaContable[]): number {
-  if (cuenta.permiteMovimiento) return cuenta.saldo;
+  if (cuenta.permiteMovimiento) return Number(cuenta.saldo) || 0;
   const children = allCuentas.filter((c) => c.cuentaPadreId === cuenta.id);
   return children.reduce((sum, c) => sum + getRecursiveSaldo(c, allCuentas), 0);
 }
@@ -33,9 +40,7 @@ function CuentaRow({ cuenta, nivel, expanded, onToggle, onEdit, onDelete, allCue
   const saldo = getRecursiveSaldo(cuenta, allCuentas);
 
   return (
-    <div
-      className={`flex items-center gap-2 px-4 py-1.5 border-b border-black/[0.03] table-row-hover cursor-default ${isParent ? "bg-black/[0.02] border-b-black/[0.06] font-semibold" : ""}`}
-    >
+    <div className={`flex items-center gap-2 px-4 py-1.5 border-b border-black/[0.03] table-row-hover cursor-default ${isParent ? "bg-black/[0.02] border-b-black/[0.06] font-semibold" : ""}`}>
       <div className="w-16 flex-shrink-0">
         {cuenta.codigo ? (
           <span className="inline-flex items-center justify-center px-1.5 py-1 rounded-lg bg-blue-50 text-xs font-bold text-blue-600 font-mono text-[10px]">
@@ -47,16 +52,14 @@ function CuentaRow({ cuenta, nivel, expanded, onToggle, onEdit, onDelete, allCue
       </div>
 
       <div className="flex-1 flex items-center" style={{ paddingLeft: `${nivel * 16}px` }}>
-        <span
-          className={`text-sm ${isParent ? "font-bold text-apple-text" : "font-medium text-apple-text/80"}`}
-        >
+        <span className={`text-sm ${isParent ? "font-bold text-apple-text" : "font-medium text-apple-text/80"}`}>
           {cuenta.nombre}
         </span>
       </div>
 
       <div className="hidden md:block w-24 text-center flex-shrink-0">
-        <span className={`inline-flex text-[11px] font-semibold px-2 py-0.5 rounded-full ${TIPO_COLORS[(cuenta.tipo as any)?.nombre] || "bg-gray-50 text-gray-700"}`}>
-          {(cuenta.tipo as any)?.nombre || "—"}
+        <span className={`inline-flex text-[11px] font-semibold px-2 py-0.5 rounded-full ${TIPO_COLORS[getTipoNombre(cuenta.tipo) as TipoCuenta] || "bg-gray-50 text-gray-700"}`}>
+          {getTipoNombre(cuenta.tipo) || "—"}
         </span>
       </div>
 
@@ -100,7 +103,7 @@ export default function CuentasPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCuenta, setEditingCuenta] = useState<CuentaContable | null>(null);
   const [expanded, setExpanded] = useState<Set<number>>(new Set([1, 2, 5, 7, 8, 10, 12, 14]));
-  
+
   const [dialog, setDialog] = useState<{ open: boolean; type: "alert"|"confirm"; message: string; onConfirm?: () => void }>({ open: false, type: "alert", message: "" });
 
   const fetchCuentas = useCallback(async () => {
@@ -155,15 +158,13 @@ export default function CuentasPage() {
     });
   };
 
-  // Build visible rows (tree-filtered)
   const filtered = search
     ? cuentas.filter((c) => c.codigo.includes(search) || c.nombre.toLowerCase().includes(search.toLowerCase()))
     : cuentas;
 
   function isVisible(cuenta: CuentaContable): boolean {
     if (search) return true;
-    if (!cuenta.cuentaPadreId) return true; // root
-    // parent must be expanded
+    if (!cuenta.cuentaPadreId) return true;
     const padre = cuentas.find((c) => c.id === cuenta.cuentaPadreId);
     if (!padre) return true;
     return expanded.has(padre.id) && isVisible(padre);
@@ -171,7 +172,9 @@ export default function CuentasPage() {
 
   const visibleCuentas = filtered.filter(isVisible);
 
-  const totalActivos = cuentas.filter(c => (c.tipo as any)?.nombre === "ACTIVO" && c.permiteMovimiento).reduce((s, c) => s + c.saldo, 0);
+  const totalActivos = cuentas
+    .filter(c => getTipoNombre(c.tipo) === "ACTIVO" && c.permiteMovimiento)
+    .reduce((s, c) => s + (Number(c.saldo) || 0), 0);
 
   return (
     <div className="flex flex-col h-full">
@@ -181,7 +184,7 @@ export default function CuentasPage() {
         {/* Summary cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {(["ACTIVO","PASIVO","PATRIMONIO","INGRESO","GASTO"] as TipoCuenta[]).map((tipoNombre: any) => {
-            const rootCuentas = cuentas.filter(c => (c.tipo as any)?.nombre?.toUpperCase() === tipoNombre && !c.cuentaPadreId);
+            const rootCuentas = cuentas.filter(c => getTipoNombre(c.tipo) === tipoNombre && !c.cuentaPadreId);
             const totalSaldo = rootCuentas.reduce((s, c) => s + getRecursiveSaldo(c, cuentas), 0);
             return (
               <div key={tipoNombre} className="bg-white rounded-2xl border border-black/[0.06] shadow-apple px-4 py-3">
@@ -215,7 +218,6 @@ export default function CuentasPage() {
 
         {/* Tree table */}
         <div className="bg-white rounded-2xl border border-black/[0.06] shadow-apple overflow-hidden">
-          {/* Header row */}
           <div className="flex items-center gap-2 px-4 py-3 border-b border-black/[0.06] bg-apple-gray/60 text-[11px] font-semibold text-apple-secondary uppercase tracking-wider">
             <div className="w-16 flex-shrink-0">Código</div>
             <div className="flex-1">Nombre</div>
