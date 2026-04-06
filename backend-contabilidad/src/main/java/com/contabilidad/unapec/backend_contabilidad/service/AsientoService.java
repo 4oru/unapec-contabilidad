@@ -53,6 +53,12 @@ public class AsientoService {
 
         // Asignamos el monto validado al encabezado
         asiento.setMontoTotal(totalDebitos);
+
+        // Calcular monto en DOP
+        java.math.BigDecimal tasa = asiento.getTasaCambio() != null
+                ? asiento.getTasaCambio()
+                : java.math.BigDecimal.ONE;
+        asiento.setMontoTotalDop(totalDebitos.multiply(tasa));
         
         Asiento saved = asientoRepository.save(asiento);
         

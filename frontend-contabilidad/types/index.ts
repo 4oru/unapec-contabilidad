@@ -4,6 +4,7 @@ import React from "react";
 export interface Moneda {
   id: number;
   codigoIso: string;
+  simbolo: string;        // ← nuevo
   nombre: string;
   descripcion: string;
   tasaCambio: number;
@@ -50,19 +51,22 @@ export interface AsientoDetalle {
 
 export interface Asiento {
   id: number;
-  numero: string;           // e.g. "ASI-2026-0001"
-  fecha: string;            // ISO 8601 date
+  numero: string;
+  fecha: string;
   descripcion: string;
   referencia?: string;
   estado: EstadoAsiento;
   detalles: AsientoDetalle[];
   totalDebe: number;
   totalHaber: number;
+  monedaId?: number;        // ← nuevo
+  tasaCambio?: number;      // ← nuevo
+  montoTotalDop?: number;   // ← nuevo
   auxiliarId?: number;
   usuarioId?: string;
   fechaCreacion?: string;
 }
-export type CreateAsientoPayload = Omit<Asiento, "id" | "numero" | "totalDebe" | "totalHaber" | "fechaCreacion">;
+export type CreateAsientoPayload = Omit<Asiento, "id" | "numero" | "totalDebe" | "totalHaber" | "montoTotalDop" | "fechaCreacion">;
 export type UpdateAsientoPayload = Partial<CreateAsientoPayload>;
 
 // ─── Configuración ────────────────────────────────────────────────────────────

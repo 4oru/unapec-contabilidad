@@ -19,7 +19,7 @@ public class Auxiliar {
     @io.swagger.v3.oas.annotations.media.Schema(description = "Nombre del auxiliar/módulo", example = "Cajas")
     private String nombre;
 
-    @Column(name = "descripcion", length = 100)
+    @Column(name = "descripcion", length = 500)
     @io.swagger.v3.oas.annotations.media.Schema(description = "Descripción para el auxiliar", example = "Módulo de recepción de ingresos")
     private String descripcion;
 

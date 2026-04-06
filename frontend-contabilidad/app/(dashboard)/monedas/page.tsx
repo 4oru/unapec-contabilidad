@@ -27,6 +27,18 @@ const getColumns = (
     exportValue: (m) => m.codigoIso,
     width: "90px",
   },
+
+  {
+      header: "Símbolo",
+      accessor: (m) => (
+        <span className="inline-flex items-center justify-center h-7 px-2 rounded-lg bg-purple-50 text-xs font-bold text-purple-600">
+          {m.simbolo}
+        </span>
+      ),
+      exportValue: (m) => m.simbolo,
+      width: "80px",
+  },
+
   {
     header: "Nombre",
     accessor: (m) => (

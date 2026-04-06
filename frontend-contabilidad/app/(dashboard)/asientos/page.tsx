@@ -5,12 +5,14 @@ import { Plus, RefreshCw, CheckCircle, XCircle, FileText, Eye } from "lucide-rea
 import Header from "@/components/layout/Header";
 import { DataTable } from "@/components/ui/DataTable";
 import { Modal } from "@/components/ui/Modal";
-import { TableColumn, Asiento, EstadoAsiento } from "@/types";
+import { TableColumn, Asiento, EstadoAsiento, Moneda } from "@/types";
 import { getAsientos } from "@/lib/asientoService";
 import { getCuentas } from "@/lib/cuentaService";
 import { useTenant } from "@/lib/tenantService";
 import { getAuxiliares, Auxiliar } from "@/lib/auxiliarService";
 import AsientoFormModal from "./components/AsientoFormModal";
+import { getMonedas } from "@/lib/monedaService";
+
 
 const ESTADO_STYLES: Record<EstadoAsiento, string> = {
   BORRADOR:   "bg-yellow-50 text-yellow-700",
@@ -23,8 +25,7 @@ function saldoStr(n: number) {
 }
 
 function EstadoBadge({ estado }: { estado: string }) {
-  const norm = (estado || "").toUpperCase() as EstadoAsiento;
-  return (
+const norm = String(estado ?? "").toUpperCase() as EstadoAsiento;  return (
     <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${ESTADO_STYLES[norm] || "bg-gray-50 text-gray-700"}`}>
       {norm === "CONFIRMADO" && <CheckCircle size={11} />}
       {norm === "ANULADO" && <XCircle size={11} />}
@@ -43,23 +44,27 @@ export default function AsientosPage() {
 
   const [cuentas, setCuentas] = useState<any[]>([]);
   const [auxiliares, setAuxiliares] = useState<Auxiliar[]>([]);
+  const [monedas, setMonedas] = useState<Moneda[]>([]);
 
   const fetchAsientosAndCuentas = useCallback(async () => {
     setLoading(true);
     try {
-      const [dataAsientos, dataCuentas, dataAuxiliares] = await Promise.all([
+      const [dataAsientos, dataCuentas, dataAuxiliares, dataMonedas] = await Promise.all([
         getAsientos(),
         getCuentas(),
-        getAuxiliares()
+        getAuxiliares(),
+        getMonedas()
       ]);
       setAsientos(dataAsientos);
       setCuentas(dataCuentas);
       setAuxiliares(dataAuxiliares);
+      setMonedas(dataMonedas);
     } catch (e: any) {
       console.error(e);
       setAsientos([]);
       setCuentas([]);
       setAuxiliares([]);
+      setMonedas([]);
     } finally {
       setLoading(false);
     }
@@ -87,8 +92,7 @@ export default function AsientosPage() {
     },
     { header: "Debe", accessor: (a) => <span className="font-mono text-right">{saldoStr((a as any).montoTotal || 0)}</span>, exportValue: (a) => ((a as any).montoTotal || 0).toFixed(2), align: "right", width: "130px" },
     { header: "Haber", accessor: (a) => <span className="font-mono text-right">{saldoStr((a as any).montoTotal || 0)}</span>, exportValue: (a) => ((a as any).montoTotal || 0).toFixed(2), align: "right", width: "130px" },
-    { header: "Estado", accessor: (a) => <EstadoBadge estado={a.estado} />, exportValue: (a) => a.estado, align: "center", width: "110px" },
-    {
+{ header: "Estado", accessor: (a) => <EstadoBadge estado={String(a.estado ?? "")} />, exportValue: (a) => a.estado, align: "center", width: "110px" },    {
       header: "",
       accessor: (a) => (
         <button onClick={() => setDetailAsiento(a)} className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium transition-colors">
@@ -102,8 +106,8 @@ export default function AsientosPage() {
   ];
 
   const totalDebe = asientos.reduce((s, a) => s + ((a as any).montoTotal || 0), 0);
-  const borradores = asientos.filter(a => a.estado?.toUpperCase() === "BORRADOR").length;
-  const confirmados = asientos.filter(a => a.estado?.toUpperCase() === "CONFIRMADO").length;
+  const borradores  = asientos.filter(a => String(a.estado ?? "").toUpperCase() === "BORRADOR").length;
+  const confirmados = asientos.filter(a => String(a.estado ?? "").toUpperCase() === "CONFIRMADO").length;
 
   return (
     <div className="flex flex-col h-full">
@@ -152,7 +156,7 @@ export default function AsientosPage() {
         onClose={() => setModalOpen(false)}
         onSuccess={(a) => setAsientos((prev) => [a, ...prev])}
         cuentas={cuentas}
-        auxiliares={auxiliares}
+        monedas={monedas}
       />
 
       {/* Detail modal */}

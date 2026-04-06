@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Plus, Trash2 } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
-import { Asiento, CuentaContable, CreateAsientoPayload } from "@/types";
+import { Asiento, CuentaContable, CreateAsientoPayload, Moneda } from "@/types";
 import { createAsiento } from "@/lib/asientoService";
 
 
@@ -22,6 +22,8 @@ const schema = z.object({
   descripcion: z.string().min(1, "La descripción es obligatoria"),
   referencia: z.string().optional(),
   estado: z.enum(["BORRADOR", "CONFIRMADO", "ANULADO"]),
+  monedaId: z.number({ invalid_type_error: "Seleccione una moneda" }).min(1, "Seleccione una moneda"),
+  tasaCambio: z.number({ invalid_type_error: "Ingrese la tasa" }).positive("La tasa debe ser positiva"),
   detalles: z.array(detalleSchema).min(2, "Se requieren al menos 2 líneas"),
 }).refine((d) => {
   const totalDebe = d.detalles.reduce((s, l) => s + (l.debe || 0), 0);
@@ -36,18 +38,18 @@ interface Props {
   onClose: () => void;
   onSuccess: (a: Asiento) => void;
   cuentas: CuentaContable[];
+  monedas: Moneda[];        // ← nuevo
 }
-
 const inputClass = "w-full px-3 py-2 rounded-xl border border-black/[0.10] bg-white text-sm text-apple-text placeholder:text-apple-secondary/60 outline-none transition-all focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400";
 const labelClass = "block text-xs font-semibold text-apple-secondary uppercase tracking-wider mb-1.5";
 const errClass  = "mt-1 text-xs text-red-500";
 const thClass   = "text-[10px] font-semibold text-apple-secondary uppercase tracking-wider text-left py-1.5 px-2";
 
-export default function AsientoFormModal({ open, onClose, onSuccess, cuentas }: Props) {
-  const movibles = cuentas.filter(c => c.aceptaMovimientos && c.estado);
+export default function AsientoFormModal({ open, onClose, onSuccess, cuentas, monedas }: Props) {
+  const movibles = cuentas.filter(c => c.permiteMovimiento !== false && c.estado !== false);
   const today = new Date().toISOString().slice(0, 10);
 
-  const { register, handleSubmit, control, watch, formState: { errors, isSubmitting }, reset } = useForm<FormData>({
+  const { register, handleSubmit, control, watch, setValue, formState: { errors, isSubmitting }, reset } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       fecha: today,
@@ -104,6 +106,29 @@ export default function AsientoFormModal({ open, onClose, onSuccess, cuentas }: 
               <option value="BORRADOR">Borrador</option>
               <option value="CONFIRMADO">Confirmado</option>
             </select>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className={labelClass}>Moneda</label>
+            <select {...register("monedaId", { valueAsNumber: true })} className={inputClass}
+              onChange={(e) => {
+                const m = monedas.find(m => m.id === Number(e.target.value));
+                if (m) setValue("tasaCambio", m.tasaCambio);
+              }}>
+              <option value={0}>— Seleccione —</option>
+              {monedas.filter(m => m.estado).map(m => (
+                <option key={m.id} value={m.id}>{m.simbolo} — {m.nombre}</option>
+              ))}
+            </select>
+            {errors.monedaId && <p className={errClass}>{errors.monedaId.message}</p>}
+          </div>
+          <div>
+            <label className={labelClass}>Tasa de Cambio</label>
+            <input type="number" step="0.0001" {...register("tasaCambio", { valueAsNumber: true })}
+              placeholder="1.0000" className={inputClass} />
+            {errors.tasaCambio && <p className={errClass}>{errors.tasaCambio.message}</p>}
           </div>
         </div>
 

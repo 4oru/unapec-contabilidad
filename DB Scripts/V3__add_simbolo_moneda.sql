@@ -1,0 +1,1 @@
+ALTER TABLE monedas_t ADD COLUMN simbolo VARCHAR(10);
