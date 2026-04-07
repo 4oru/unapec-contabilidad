@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 
@@ -21,6 +22,7 @@ public class AsientoDetalle {
     @ManyToOne
     @JoinColumn(name = "asiento_id", referencedColumnName = "id", nullable = false)
     @JsonIgnore
+    @ToString.Exclude
     private Asiento asiento;
 
     @NotNull(message = "La cuenta contable es obligatoria")

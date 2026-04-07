@@ -2,7 +2,9 @@ package com.contabilidad.unapec.backend_contabilidad.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.ToString;
 import java.math.BigDecimal;
 
 @Entity
@@ -47,6 +49,8 @@ public class CuentaContable {
 
     @ManyToOne
     @JoinColumn(name = "cuenta_mayor_id", referencedColumnName = "id")
+    @JsonIgnoreProperties({"cuentaMayor", "subCuentas"})
+    @ToString.Exclude
     @io.swagger.v3.oas.annotations.media.Schema(description = "Cuenta superior de mayor (si aplica)")
     private CuentaContable cuentaMayor;
 

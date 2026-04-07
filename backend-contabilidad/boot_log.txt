@@ -10240,3 +10240,2380 @@ Hibernate:
             on t2_0.id=c1_0.tipo_id 
     where
         d1_0.asiento_id=?
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0
+Hibernate: 
+    select
+        cc1_0.id,
+        cc1_0.balance,
+        cc1_0.codigo,
+        cc1_0.cuenta_mayor_id,
+        cc1_0.descripcion,
+        cc1_0.estado,
+        cc1_0.nivel,
+        cc1_0.nombre,
+        cc1_0.permite_movimiento,
+        cc1_0.tipo_id 
+    from
+        cuentas_contables_t cc1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0 
+    where
+        tc1_0.id=?
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0
+Hibernate: 
+    select
+        cc1_0.id,
+        cc1_0.balance,
+        cc1_0.codigo,
+        cc1_0.cuenta_mayor_id,
+        cc1_0.descripcion,
+        cc1_0.estado,
+        cc1_0.nivel,
+        cc1_0.nombre,
+        cc1_0.permite_movimiento,
+        cc1_0.tipo_id 
+    from
+        cuentas_contables_t cc1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0 
+    where
+        tc1_0.id=?
+Hibernate: 
+    select
+        count(*) 
+    from
+        tipos_cuenta_t tc1_0 
+    where
+        tc1_0.id=?
+Hibernate: 
+    insert 
+    into
+        cuentas_contables_t
+        (balance, codigo, cuenta_mayor_id, descripcion, estado, nivel, nombre, permite_movimiento, tipo_id) 
+    values
+        (?, ?, ?, ?, ?, ?, ?, ?, ?)
+Hibernate: 
+    select
+        a1_0.id,
+        a1_0.auxiliar_id,
+        a1_0.descripcion,
+        a1_0.estado,
+        a1_0.fecha_asiento,
+        a1_0.moneda_id,
+        a1_0.monto_total,
+        a1_0.monto_total_dop,
+        a1_0.tasa_cambio 
+    from
+        asientos_t a1_0
+Hibernate: 
+    select
+        m1_0.id,
+        m1_0.codigo_iso,
+        m1_0.descripcion,
+        m1_0.estado,
+        m1_0.fecha_creacion,
+        m1_0.nombre,
+        m1_0.simbolo,
+        m1_0.tasa_cambio 
+    from
+        monedas_t m1_0 
+    where
+        m1_0.id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        a1_0.id,
+        a1_0.descripcion,
+        a1_0.estado,
+        a1_0.nombre 
+    from
+        auxiliares_t a1_0
+Hibernate: 
+    select
+        m1_0.id,
+        m1_0.codigo_iso,
+        m1_0.descripcion,
+        m1_0.estado,
+        m1_0.fecha_creacion,
+        m1_0.nombre,
+        m1_0.simbolo,
+        m1_0.tasa_cambio 
+    from
+        monedas_t m1_0
+Hibernate: 
+    select
+        cc1_0.id,
+        cc1_0.balance,
+        cc1_0.codigo,
+        cc1_0.cuenta_mayor_id,
+        cc1_0.descripcion,
+        cc1_0.estado,
+        cc1_0.nivel,
+        cc1_0.nombre,
+        cc1_0.permite_movimiento,
+        cc1_0.tipo_id 
+    from
+        cuentas_contables_t cc1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0 
+    where
+        tc1_0.id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        a1_0.id,
+        a1_0.descripcion,
+        a1_0.estado,
+        a1_0.nombre 
+    from
+        auxiliares_t a1_0
+Hibernate: 
+    select
+        m1_0.id,
+        m1_0.codigo_iso,
+        m1_0.descripcion,
+        m1_0.estado,
+        m1_0.fecha_creacion,
+        m1_0.nombre,
+        m1_0.simbolo,
+        m1_0.tasa_cambio 
+    from
+        monedas_t m1_0
+Hibernate: 
+    select
+        cc1_0.id,
+        cc1_0.balance,
+        cc1_0.codigo,
+        cc1_0.cuenta_mayor_id,
+        cc1_0.descripcion,
+        cc1_0.estado,
+        cc1_0.nivel,
+        cc1_0.nombre,
+        cc1_0.permite_movimiento,
+        cc1_0.tipo_id 
+    from
+        cuentas_contables_t cc1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0 
+    where
+        tc1_0.id=?
+Hibernate: 
+    select
+        a1_0.id,
+        a1_0.auxiliar_id,
+        a1_0.descripcion,
+        a1_0.estado,
+        a1_0.fecha_asiento,
+        a1_0.moneda_id,
+        a1_0.monto_total,
+        a1_0.monto_total_dop,
+        a1_0.tasa_cambio 
+    from
+        asientos_t a1_0
+Hibernate: 
+    select
+        m1_0.id,
+        m1_0.codigo_iso,
+        m1_0.descripcion,
+        m1_0.estado,
+        m1_0.fecha_creacion,
+        m1_0.nombre,
+        m1_0.simbolo,
+        m1_0.tasa_cambio 
+    from
+        monedas_t m1_0 
+    where
+        m1_0.id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        cc1_0.id,
+        cc1_0.balance,
+        cc1_0.codigo,
+        cc1_0.cuenta_mayor_id,
+        cc1_0.descripcion,
+        cc1_0.estado,
+        cc1_0.nivel,
+        cc1_0.nombre,
+        cc1_0.permite_movimiento,
+        cc1_0.tipo_id 
+    from
+        cuentas_contables_t cc1_0
+Hibernate: 
+    select
+        a1_0.id,
+        a1_0.auxiliar_id,
+        a1_0.descripcion,
+        a1_0.estado,
+        a1_0.fecha_asiento,
+        a1_0.moneda_id,
+        a1_0.monto_total,
+        a1_0.monto_total_dop,
+        a1_0.tasa_cambio 
+    from
+        asientos_t a1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0 
+    where
+        tc1_0.id=?
+Hibernate: 
+    select
+        m1_0.id,
+        m1_0.codigo_iso,
+        m1_0.descripcion,
+        m1_0.estado,
+        m1_0.fecha_creacion,
+        m1_0.nombre,
+        m1_0.simbolo,
+        m1_0.tasa_cambio 
+    from
+        monedas_t m1_0 
+    where
+        m1_0.id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        cc1_0.id,
+        cc1_0.balance,
+        cc1_0.codigo,
+        cc1_0.cuenta_mayor_id,
+        cc1_0.descripcion,
+        cc1_0.estado,
+        cc1_0.nivel,
+        cc1_0.nombre,
+        cc1_0.permite_movimiento,
+        cc1_0.tipo_id 
+    from
+        cuentas_contables_t cc1_0
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0 
+    where
+        tc1_0.id=?
+Hibernate: 
+    select
+        a1_0.id,
+        a1_0.auxiliar_id,
+        a1_0.descripcion,
+        a1_0.estado,
+        a1_0.fecha_asiento,
+        a1_0.moneda_id,
+        a1_0.monto_total,
+        a1_0.monto_total_dop,
+        a1_0.tasa_cambio 
+    from
+        asientos_t a1_0
+Hibernate: 
+    select
+        m1_0.id,
+        m1_0.codigo_iso,
+        m1_0.descripcion,
+        m1_0.estado,
+        m1_0.fecha_creacion,
+        m1_0.nombre,
+        m1_0.simbolo,
+        m1_0.tasa_cambio 
+    from
+        monedas_t m1_0 
+    where
+        m1_0.id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        c1_0.id,
+        c1_0.clave,
+        c1_0.descripcion,
+        c1_0.editable,
+        c1_0.grupo,
+        c1_0.tipo,
+        c1_0.valor 
+    from
+        configuracion_t c1_0
+Hibernate: 
+    select
+        c1_0.id,
+        c1_0.clave,
+        c1_0.descripcion,
+        c1_0.editable,
+        c1_0.grupo,
+        c1_0.tipo,
+        c1_0.valor 
+    from
+        configuracion_t c1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0
+Hibernate: 
+    select
+        cc1_0.id,
+        cc1_0.balance,
+        cc1_0.codigo,
+        cc1_0.cuenta_mayor_id,
+        cc1_0.descripcion,
+        cc1_0.estado,
+        cc1_0.nivel,
+        cc1_0.nombre,
+        cc1_0.permite_movimiento,
+        cc1_0.tipo_id 
+    from
+        cuentas_contables_t cc1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0 
+    where
+        tc1_0.id=?
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0
+Hibernate: 
+    select
+        cc1_0.id,
+        cc1_0.balance,
+        cc1_0.codigo,
+        cc1_0.cuenta_mayor_id,
+        cc1_0.descripcion,
+        cc1_0.estado,
+        cc1_0.nivel,
+        cc1_0.nombre,
+        cc1_0.permite_movimiento,
+        cc1_0.tipo_id 
+    from
+        cuentas_contables_t cc1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0 
+    where
+        tc1_0.id=?
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0
+Hibernate: 
+    select
+        a1_0.id,
+        a1_0.descripcion,
+        a1_0.estado,
+        a1_0.nombre 
+    from
+        auxiliares_t a1_0
+Hibernate: 
+    select
+        a1_0.id,
+        a1_0.descripcion,
+        a1_0.estado,
+        a1_0.nombre 
+    from
+        auxiliares_t a1_0
+Hibernate: 
+    select
+        m1_0.id,
+        m1_0.codigo_iso,
+        m1_0.descripcion,
+        m1_0.estado,
+        m1_0.fecha_creacion,
+        m1_0.nombre,
+        m1_0.simbolo,
+        m1_0.tasa_cambio 
+    from
+        monedas_t m1_0
+Hibernate: 
+    select
+        m1_0.id,
+        m1_0.codigo_iso,
+        m1_0.descripcion,
+        m1_0.estado,
+        m1_0.fecha_creacion,
+        m1_0.nombre,
+        m1_0.simbolo,
+        m1_0.tasa_cambio 
+    from
+        monedas_t m1_0
+Hibernate: 
+    select
+        m1_0.id,
+        m1_0.codigo_iso,
+        m1_0.descripcion,
+        m1_0.estado,
+        m1_0.fecha_creacion,
+        m1_0.nombre,
+        m1_0.simbolo,
+        m1_0.tasa_cambio 
+    from
+        monedas_t m1_0
+Hibernate: 
+    select
+        c1_0.id,
+        c1_0.clave,
+        c1_0.descripcion,
+        c1_0.editable,
+        c1_0.grupo,
+        c1_0.tipo,
+        c1_0.valor 
+    from
+        configuracion_t c1_0
+Hibernate: 
+    select
+        m1_0.id,
+        m1_0.codigo_iso,
+        m1_0.descripcion,
+        m1_0.estado,
+        m1_0.fecha_creacion,
+        m1_0.nombre,
+        m1_0.simbolo,
+        m1_0.tasa_cambio 
+    from
+        monedas_t m1_0
+Hibernate: 
+    select
+        c1_0.id,
+        c1_0.clave,
+        c1_0.descripcion,
+        c1_0.editable,
+        c1_0.grupo,
+        c1_0.tipo,
+        c1_0.valor 
+    from
+        configuracion_t c1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0
+Hibernate: 
+    select
+        tc1_0.id,
+        tc1_0.descripcion,
+        tc1_0.estado,
+        tc1_0.nombre,
+        tc1_0.origen 
+    from
+        tipos_cuenta_t tc1_0
+Hibernate: 
+    select
+        a1_0.id,
+        a1_0.auxiliar_id,
+        a1_0.descripcion,
+        a1_0.estado,
+        a1_0.fecha_asiento,
+        a1_0.moneda_id,
+        a1_0.monto_total,
+        a1_0.monto_total_dop,
+        a1_0.tasa_cambio 
+    from
+        asientos_t a1_0
+Hibernate: 
+    select
+        m1_0.id,
+        m1_0.codigo_iso,
+        m1_0.descripcion,
+        m1_0.estado,
+        m1_0.fecha_creacion,
+        m1_0.nombre,
+        m1_0.simbolo,
+        m1_0.tasa_cambio 
+    from
+        monedas_t m1_0 
+    where
+        m1_0.id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+Hibernate: 
+    select
+        d1_0.asiento_id,
+        d1_0.id,
+        d1_0.cuenta_id,
+        c1_0.id,
+        c1_0.balance,
+        c1_0.codigo,
+        cm1_0.id,
+        cm1_0.balance,
+        cm1_0.codigo,
+        cm1_0.cuenta_mayor_id,
+        cm1_0.descripcion,
+        cm1_0.estado,
+        cm1_0.nivel,
+        cm1_0.nombre,
+        cm1_0.permite_movimiento,
+        t1_0.id,
+        t1_0.descripcion,
+        t1_0.estado,
+        t1_0.nombre,
+        t1_0.origen,
+        c1_0.descripcion,
+        c1_0.estado,
+        c1_0.nivel,
+        c1_0.nombre,
+        c1_0.permite_movimiento,
+        t2_0.id,
+        t2_0.descripcion,
+        t2_0.estado,
+        t2_0.nombre,
+        t2_0.origen,
+        d1_0.monto,
+        d1_0.tipo_movimiento 
+    from
+        asientos_detalle_t d1_0 
+    left join
+        cuentas_contables_t c1_0 
+            on c1_0.id=d1_0.cuenta_id 
+    left join
+        cuentas_contables_t cm1_0 
+            on cm1_0.id=c1_0.cuenta_mayor_id 
+    left join
+        tipos_cuenta_t t1_0 
+            on t1_0.id=cm1_0.tipo_id 
+    left join
+        tipos_cuenta_t t2_0 
+            on t2_0.id=c1_0.tipo_id 
+    where
+        d1_0.asiento_id=?
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  04:08 h
+[INFO] Finished at: 2026-04-07T02:32:33-04:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.4.3:run (default-cli) on project backend-contabilidad: Process terminated with exit code: -1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

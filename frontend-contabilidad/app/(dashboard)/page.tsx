@@ -17,37 +17,36 @@ import { getMonedas } from "@/lib/monedaService";
 import { getConfiguraciones, MOCK_CONFIG } from "@/lib/configuracionService";
 import { Moneda } from "@/types";
 
+import { fetchMonthlyStats, DashboardStats } from "@/lib/dashboardService";
+
 const MESES = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
-
-// Mock data — reemplazar con datos reales cuando existan endpoints
-const mockMensual = MESES.map((mes, i) => ({
-  mes,
-  ingresos: Math.round(80000 + Math.random() * 40000),
-  gastos:   Math.round(50000 + Math.random() * 30000),
-  balance:  Math.round(20000 + Math.random() * 20000),
-}));
-
-const mockTasas = [
-  { name: "DOP", tasa: 1 },
-  { name: "USD", tasa: 58.5 },
-  { name: "EUR", tasa: 61.35 },
-];
 
 export default function DashboardPage() {
   const { activeTenant } = useTenant();
   const [monedas, setMonedas] = useState<Moneda[]>([]);
   const [monedaBase, setMonedaBase] = useState<string>("DOP");
+  const [mensual, setMensual] = useState<DashboardStats[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     Promise.all([
       getMonedas(),
-      getConfiguraciones().catch(() => MOCK_CONFIG)
-    ]).then(([dataMonedas, dataConfig]) => {
+      getConfiguraciones().catch(() => MOCK_CONFIG),
+      fetchMonthlyStats()
+    ]).then(([dataMonedas, dataConfig, dataMensual]) => {
       setMonedas(dataMonedas);
       const base = dataConfig.find(c => c.clave === "contabilidad.moneda_base")?.valor || "DOP";
       setMonedaBase(base);
-    }).catch(() => {
+      
+      // Mapear meses cortos para el gráfico si es necesario
+      const stats = dataMensual.map(s => ({
+        ...s,
+        mes: s.mes.substring(0, 3) 
+      }));
+      setMensual(stats);
+    }).catch((err) => {
+      console.error("Dashboard init error:", err);
       setMonedas([]);
     }).finally(() => setLoading(false));
   }, [activeTenant.id]);
@@ -118,29 +117,35 @@ export default function DashboardPage() {
         <div className="grid grid-cols-12 gap-4">
 
           {/* Ingresos vs Gastos del mes */}
-          <div className="col-span-12 md:col-span-8 bg-white rounded-2xl border border-black/[0.06] shadow-apple p-5">
+          <div className="col-span-12 md:col-span-8 bg-white rounded-2xl border border-black/[0.06] shadow-apple p-5 relative min-h-[280px]">
             <h2 className="text-sm font-semibold text-apple-text mb-4">Ingresos vs Gastos — {new Date().getFullYear()}</h2>
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={mockMensual}>
-                <defs>
-                  <linearGradient id="colorIngresos" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#34c759" stopOpacity={0.15} />
-                    <stop offset="95%" stopColor="#34c759" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="colorGastos" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ff3b30" stopOpacity={0.15} />
-                    <stop offset="95%" stopColor="#ff3b30" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v: number) => `${(v/1000).toFixed(0)}k`} />
-                <Tooltip formatter={(v: any) => `RD$ ${Number(v).toLocaleString()}`} />
-                <Legend />
-                <Area type="monotone" dataKey="ingresos" stroke="#34c759" fill="url(#colorIngresos)" strokeWidth={2} name="Ingresos" />
-                <Area type="monotone" dataKey="gastos"   stroke="#ff3b30" fill="url(#colorGastos)"   strokeWidth={2} name="Gastos" />
-              </AreaChart>
-            </ResponsiveContainer>
+            {loading ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-sm rounded-2xl">
+                <Activity className="animate-spin text-blue-500" size={24} />
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={220}>
+                <AreaChart data={mensual}>
+                  <defs>
+                    <linearGradient id="colorIngresos" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#34c759" stopOpacity={0.15} />
+                      <stop offset="95%" stopColor="#34c759" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="colorGastos" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ff3b30" stopOpacity={0.15} />
+                      <stop offset="95%" stopColor="#ff3b30" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
+                  <YAxis tick={{ fontSize: 11 }} tickFormatter={(v: number) => `${(v/1000).toFixed(0)}k`} />
+                  <Tooltip formatter={(v: any) => `RD$ ${Number(v).toLocaleString()}`} />
+                  <Legend />
+                  <Area type="monotone" dataKey="ingresos" stroke="#34c759" fill="url(#colorIngresos)" strokeWidth={2} name="Ingresos" />
+                  <Area type="monotone" dataKey="gastos"   stroke="#ff3b30" fill="url(#colorGastos)"   strokeWidth={2} name="Gastos" />
+                </AreaChart>
+              </ResponsiveContainer>
+            )}
           </div>
 
           {/* Tasas de cambio */}
@@ -158,17 +163,23 @@ export default function DashboardPage() {
           </div>
 
           {/* Balance del mes */}
-          <div className="col-span-12 bg-white rounded-2xl border border-black/[0.06] shadow-apple p-5">
+          <div className="col-span-12 bg-white rounded-2xl border border-black/[0.06] shadow-apple p-5 relative min-h-[220px]">
             <h2 className="text-sm font-semibold text-apple-text mb-4">Balance Mensual — {new Date().getFullYear()}</h2>
-            <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={mockMensual}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v: number) => `${(v/1000).toFixed(0)}k`} />
-                <Tooltip formatter={(v: any) => `RD$ ${Number(v).toLocaleString()}`} />
-                <Bar dataKey="balance" fill="#0071e3" radius={[6, 6, 0, 0]} name="Balance" />
-              </BarChart>
-            </ResponsiveContainer>
+            {loading ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-sm rounded-2xl">
+                <BarChart3 className="animate-spin text-blue-500" size={24} />
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={mensual}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
+                  <YAxis tick={{ fontSize: 11 }} tickFormatter={(v: number) => `${(v/1000).toFixed(0)}k`} />
+                  <Tooltip formatter={(v: any) => `RD$ ${Number(v).toLocaleString()}`} />
+                  <Bar dataKey="balance" fill="#0071e3" radius={[6, 6, 0, 0]} name="Balance" />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
 
         </div>
