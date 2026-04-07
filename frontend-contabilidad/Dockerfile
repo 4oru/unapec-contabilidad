@@ -2,7 +2,10 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 COPY package*.json ./
-RUN npm ci --only=production
+
+# Instalar todas las dependencias necesarias para compilar (incluyendo TypeScript)
+RUN npm install
+
 COPY . .
 RUN npm run build 
 
@@ -11,7 +14,7 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV production
 
-# Security: Don't run as root
+# Seguridad: No correr como root
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
