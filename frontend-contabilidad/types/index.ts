@@ -1,10 +1,10 @@
-import React from "react";
+import type React from "react";
 
 // ─── Moneda ───────────────────────────────────────────────────────────────────
 export interface Moneda {
   id: number;
   codigoIso: string;
-  simbolo: string;        // ← nuevo
+  simbolo: string;
   nombre: string;
   descripcion: string;
   tasaCambio: number;
@@ -14,60 +14,106 @@ export interface Moneda {
 export type CreateMonedaPayload = Omit<Moneda, "id" | "fechaCreacion">;
 export type UpdateMonedaPayload = Partial<CreateMonedaPayload>;
 
-// ─── Cuenta Contable ─────────────────────────────────────────────────────────
-export type TipoCuenta = "ACTIVO" | "PASIVO" | "PATRIMONIO" | "INGRESO" | "GASTO";
-export type NaturalezaCuenta = "DEUDORA" | "ACREEDORA";
+// ─── Tipo de Cuenta (entidad del backend) ─────────────────────────────────────
+export interface TipoCuentaEntity {
+  id: number;
+  nombre: string;        // "Activos", "Pasivos", etc.
+  descripcion?: string;
+  origen?: string;       // "DEBITO" | "CREDITO"
+  estado?: boolean;
+}
 
+// Union type for flexibility: backend sends object, some UI code uses string
+export type TipoCuenta = "ACTIVO" | "PASIVO" | "PATRIMONIO" | "INGRESO" | "GASTO";
+
+/** Extract the uppercase tipo name from either a TipoCuentaEntity or a string */
+export function getTipoNombre(tipo: TipoCuentaEntity | string | null | undefined): string {
+  if (!tipo) return "";
+  if (typeof tipo === "string") return tipo.toUpperCase();
+  return (tipo.nombre || "").toUpperCase();
+}
+
+/** 
+ * Helper to determine account nature based on type ID or name.
+ * 1 (ACTIVO), 5 (GASTO) -> DEUDORA
+ * 2 (PASIVO), 3 (PATRIMONIO), 4 (INGRESO) -> ACREEDORA
+ */
+export function getNaturalezaByType(tipo: TipoCuentaEntity | string | null | undefined): "DEUDORA" | "ACREEDORA" {
+  const name = getTipoNombre(tipo);
+  const deudoras = ["ACTIVO", "GASTO", "COSTO"];
+  return deudoras.includes(name) ? "DEUDORA" : "ACREEDORA";
+}
+
+// ─── Cuenta Contable ─────────────────────────────────────────────────────────
 export interface CuentaContable {
   id: number;
   codigo: string;           // e.g. "1.1.01"
   nombre: string;
   descripcion?: string;
-  tipo: TipoCuenta;
-  origen?: string;
-  naterialeza?: NaturalezaCuenta; // fallback if any
-  cuentaPadreId?: number;
-  cuentaPadre?: Pick<CuentaContable, "id" | "codigo" | "nombre">;
+  tipo: TipoCuentaEntity | null;  // Backend sends nested object
   nivel: number;            // 1=grupo, 2=subgrupo, 3=cuenta, 4=subcuenta
   permiteMovimiento: boolean;
-  saldo: number;
+  balance: number;          // Backend field name (was "saldo")
+  cuentaMayor: CuentaContable | null;  // Backend field name (was "cuentaPadreId")
   estado: boolean;
-  fechaCreacion?: string;
 }
-export type CreateCuentaPayload = Omit<CuentaContable, "id" | "fechaCreacion" | "cuentaPadre" | "saldo">;
+
+export interface CreateCuentaPayload {
+  codigo: string;
+  nombre: string;
+  descripcion?: string;
+  tipo: { id: number };
+  nivel: number;
+  permiteMovimiento: boolean;
+  estado: boolean;
+  cuentaMayor?: { id: number } | null;
+}
 export type UpdateCuentaPayload = Partial<CreateCuentaPayload>;
 
 // ─── Asiento Contable ────────────────────────────────────────────────────────
-export type EstadoAsiento = "BORRADOR" | "CONFIRMADO" | "ANULADO";
-
 export interface AsientoDetalle {
   id?: number;
-  cuentaId: number;
-  cuenta?: Pick<CuentaContable, "id" | "codigo" | "nombre">;
-  concepto: string;
-  debe: number;
-  haber: number;
+  cuenta: CuentaContable | null;    // Backend sends nested, @JsonIgnore only on asiento back-ref
+  tipoMovimiento: "Debito" | "Credito";
+  monto: number;
+}
+
+/** UI helper: extract debe/haber from a detail row */
+export function getDebeHaber(d: AsientoDetalle): { debe: number; haber: number } {
+  const monto = Number(d.monto) || 0;
+  return {
+    debe:  d.tipoMovimiento === "Debito" ? monto : 0,
+    haber: d.tipoMovimiento === "Credito" ? monto : 0,
+  };
 }
 
 export interface Asiento {
   id: number;
-  numero: string;
-  fecha: string;
   descripcion: string;
-  referencia?: string;
-  estado: EstadoAsiento;
+  fechaAsiento: string;              // Backend field name (was "fecha")
+  montoTotal: number;                // Sum of all Debitos (= sum of Creditos)
+  montoTotalDop?: number;
+  estado: boolean;                   // Backend uses boolean (true=active, false=anulado)
   detalles: AsientoDetalle[];
-  totalDebe: number;
-  totalHaber: number;
-  monedaId?: number;        // ← nuevo
-  tasaCambio?: number;      // ← nuevo
-  montoTotalDop?: number;   // ← nuevo
-  auxiliarId?: number;
-  usuarioId?: string;
-  fechaCreacion?: string;
+  moneda?: Moneda | null;            // Backend sends nested object (was monedaId)
+  tasaCambio?: number;
+  auxiliar?: { id: number; nombre?: string } | null;  // Backend sends nested (was auxiliarId)
+  referencia?: string;               // Not in backend model, kept for form compatibility
 }
-export type CreateAsientoPayload = Omit<Asiento, "id" | "numero" | "totalDebe" | "totalHaber" | "montoTotalDop" | "fechaCreacion">;
-export type UpdateAsientoPayload = Partial<CreateAsientoPayload>;
+
+export interface CreateAsientoPayload {
+  descripcion: string;
+  fechaAsiento: string;
+  moneda?: { id: number };
+  auxiliar?: { id: number };
+  tasaCambio?: number;
+  estado?: boolean;
+  detalles: {
+    cuenta: { id: number };
+    tipoMovimiento: "Debito" | "Credito";
+    monto: number;
+  }[];
+}
 
 // ─── Configuración ────────────────────────────────────────────────────────────
 export interface ConfiguracionSistema {

@@ -58,3 +58,6 @@ desktop.ini
 
 # --- DOCKER / BASE DE DATOS ---
 Docker/postgres-data/
+
+# --- LOGS ---
+*.log

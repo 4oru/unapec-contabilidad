@@ -5,22 +5,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Modal } from "@/components/ui/Modal";
-import { CuentaContable, TipoCuenta, NaturalezaCuenta, CreateCuentaPayload } from "@/types";
-import { createCuenta, updateCuenta, MOCK_CUENTAS } from "@/lib/cuentaService";
+import { CuentaContable, getTipoNombre, getNaturalezaByType, TipoCuentaEntity } from "@/types";
+import { createCuenta, updateCuenta, buildCuentaPayload } from "@/lib/cuentaService";
+import { getTiposCuenta, TipoCuentaDto } from "@/lib/tipoCuentaService";
 
-const TIPOS: TipoCuenta[] = ["ACTIVO", "PASIVO", "PATRIMONIO", "INGRESO", "GASTO"];
-const NATURALEZAS: NaturalezaCuenta[] = ["DEUDORA", "ACREEDORA"];
+const NATURALEZAS = ["DEUDORA", "ACREEDORA"] as const;
 
 const schema = z.object({
   codigo: z.string().min(1, "El código es obligatorio").max(20),
   nombre: z.string().min(1, "El nombre es obligatorio").max(150),
   descripcion: z.string().optional(),
-  tipo: z.enum(["ACTIVO", "PASIVO", "PATRIMONIO", "INGRESO", "GASTO"]),
-  naturaleza: z.enum(["DEUDORA", "ACREEDORA"]),
-  cuentaPadreId: z.number().optional(),
+  tipoId: z.number().min(1, "El tipo es obligatorio"),
   nivel: z.number().min(1).max(4),
-  aceptaMovimientos: z.boolean(),
+  permiteMovimiento: z.boolean(),
   estado: z.boolean(),
+  cuentaMayorId: z.number().optional().nullable(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -39,17 +38,21 @@ const errClass  = "mt-1 text-xs text-red-500";
 
 export default function CuentaFormModal({ open, onClose, onSuccess, cuentas, initialData }: Props) {
   const [apiError, setApiError] = useState<string | null>(null);
+  const [tiposFetched, setTiposFetched] = useState<TipoCuentaDto[]>([]);
 
   const { register, handleSubmit, reset, watch, setValue, formState: { errors, isSubmitting } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { tipo: "ACTIVO", naturaleza: "DEUDORA", nivel: 3, aceptaMovimientos: true, estado: true },
+    defaultValues: { tipoId: 1, nivel: 3, permiteMovimiento: true, estado: true },
   });
 
-  // Auto-set naturaleza based on tipo
-  const tipo = watch("tipo");
+  // Fetch types on mount
   useEffect(() => {
-    setValue("naturaleza", tipo === "ACTIVO" || tipo === "GASTO" ? "DEUDORA" : "ACREEDORA");
-  }, [tipo, setValue]);
+    getTiposCuenta().then(setTiposFetched).catch(console.error);
+  }, []);
+
+  // Auto-set naturaleza label based on tipo (cosmetic only)
+  const tipoId = watch("tipoId");
+  const selectedTipo = tiposFetched.find(t => t.id === Number(tipoId));
 
   useEffect(() => { 
     if (open) {
@@ -59,27 +62,27 @@ export default function CuentaFormModal({ open, onClose, onSuccess, cuentas, ini
           codigo: initialData.codigo,
           nombre: initialData.nombre,
           descripcion: initialData.descripcion || "",
-          tipo: initialData.tipo,
-          naturaleza: initialData.naturaleza,
-          cuentaPadreId: initialData.cuentaPadreId,
+          tipoId: initialData.tipo?.id || 1,
+          cuentaMayorId: initialData.cuentaMayor?.id || null,
           nivel: initialData.nivel,
-          aceptaMovimientos: initialData.aceptaMovimientos,
+          permiteMovimiento: initialData.permiteMovimiento,
           estado: initialData.estado,
         });
       } else {
-        reset({ tipo: "ACTIVO", naturaleza: "DEUDORA", nivel: 3, aceptaMovimientos: true, estado: true });
+        reset({ tipoId: tiposFetched[0]?.id || 1, nivel: 3, permiteMovimiento: true, estado: true, cuentaMayorId: null });
       }
     }
-  }, [open, initialData, reset]);
+  }, [open, initialData, reset, tiposFetched]);
 
   const onSubmit = async (data: FormData) => {
     try {
       setApiError(null);
+      const payload = buildCuentaPayload(data);
       let saved: CuentaContable;
       if (initialData) {
-        saved = await updateCuenta(initialData.id, data as CreateCuentaPayload);
+        saved = await updateCuenta(initialData.id, payload);
       } else {
-        saved = await createCuenta(data as CreateCuentaPayload);
+        saved = await createCuenta(payload);
       }
       onSuccess(saved);
       onClose();
@@ -88,7 +91,7 @@ export default function CuentaFormModal({ open, onClose, onSuccess, cuentas, ini
     }
   };
 
-  const padresDisponibles = cuentas.filter((c) => !c.aceptaMovimientos && c.id !== initialData?.id);
+  const padresDisponibles = cuentas.filter((c) => !c.permiteMovimiento && c.id !== initialData?.id);
 
   return (
     <Modal open={open} onClose={onClose} title={initialData ? "Editar Cuenta" : "Nueva Cuenta Contable"} subtitle={initialData ? "Modifica los datos de la cuenta" : "Agrega una cuenta al plan contable"}>
@@ -129,22 +132,25 @@ export default function CuentaFormModal({ open, onClose, onSuccess, cuentas, ini
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className={labelClass}>Tipo</label>
-            <select {...register("tipo")} className={inputClass}>
-              {TIPOS.map((t) => <option key={t} value={t}>{t}</option>)}
+            <select {...register("tipoId", { valueAsNumber: true })} className={inputClass}>
+              {tiposFetched.map((t) => <option key={t.id} value={t.id}>{t.nombre}</option>)}
             </select>
+            {errors.tipoId && <p className={errClass}>{errors.tipoId.message}</p>}
           </div>
           <div>
-            <label className={labelClass}>Naturaleza</label>
-            <select {...register("naturaleza")} className={inputClass}>
-              {NATURALEZAS.map((n) => <option key={n} value={n}>{n}</option>)}
-            </select>
+            <label className={labelClass}>Naturaleza <span className="normal-case text-[10px] text-apple-secondary/60">(auto)</span></label>
+            <input
+              readOnly
+              value={getNaturalezaByType(selectedTipo?.nombre || "")}
+              className={`${inputClass} bg-apple-gray/40 cursor-not-allowed`}
+            />
           </div>
         </div>
 
         {padresDisponibles.length > 0 && (
           <div>
             <label className={labelClass}>Cuenta padre (opcional)</label>
-            <select {...register("cuentaPadreId", { valueAsNumber: true })} className={inputClass}>
+            <select {...register("cuentaMayorId", { valueAsNumber: true })} className={inputClass}>
               <option value="">— Sin padre —</option>
               {padresDisponibles.map((c) => (
                 <option key={c.id} value={c.id}>{c.codigo} — {c.nombre}</option>
@@ -155,7 +161,7 @@ export default function CuentaFormModal({ open, onClose, onSuccess, cuentas, ini
 
         <div className="flex gap-3">
           <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" {...register("aceptaMovimientos")} className="w-4 h-4 rounded accent-blue-600" />
+            <input type="checkbox" {...register("permiteMovimiento")} className="w-4 h-4 rounded accent-blue-600" />
             <span className="text-sm text-apple-text">Acepta movimientos</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer">

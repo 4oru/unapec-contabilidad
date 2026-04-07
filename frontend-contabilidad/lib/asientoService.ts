@@ -1,5 +1,5 @@
 import apiClient from "@/lib/apiClient";
-import { Asiento, CreateAsientoPayload, UpdateAsientoPayload } from "@/types";
+import { Asiento, CreateAsientoPayload } from "@/types";
 
 const BASE = "/api/asientos";
 
@@ -13,37 +13,15 @@ export async function getAsientoById(id: number): Promise<Asiento> {
   return data;
 }
 
+/**
+ * Create a new asiento. The backend expects a single Asiento object with
+ * nested detalles — NOT a wrapper object like {asiento, detalles}.
+ */
 export async function createAsiento(payload: CreateAsientoPayload): Promise<Asiento> {
-  const backendPayload = {
-    asiento: {
-      fechaAsiento: payload.fecha.split("T")[0],
-      descripcion: payload.descripcion,
-      referencia: payload.referencia
-    },
-    detalles: payload.detalles.map(d => ({
-      cuenta: { id: d.cuentaId },
-      tipoMovimiento: d.debe > 0 ? "Debito" : "Credito",
-      monto: d.debe > 0 ? d.debe : d.haber
-    }))
-  };
-
-  const { data } = await apiClient.post<Asiento>(BASE, backendPayload);
+  const { data } = await apiClient.post<Asiento>(BASE, payload);
   return data;
 }
 
-export async function updateAsiento(id: number, payload: UpdateAsientoPayload): Promise<Asiento> {
-  const { data } = await apiClient.put<Asiento>(`${BASE}/${id}`, payload);
-  return data;
+export async function deleteAsiento(id: number): Promise<void> {
+  await apiClient.delete(`${BASE}/${id}`);
 }
-
-export async function confirmarAsiento(id: number): Promise<Asiento> {
-  const { data } = await apiClient.patch<Asiento>(`${BASE}/${id}/confirmar`);
-  return data;
-}
-
-export async function anularAsiento(id: number): Promise<Asiento> {
-  const { data } = await apiClient.patch<Asiento>(`${BASE}/${id}/anular`);
-  return data;
-}
-
-

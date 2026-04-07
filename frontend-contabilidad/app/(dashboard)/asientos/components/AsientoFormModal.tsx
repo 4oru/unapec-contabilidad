@@ -9,19 +9,15 @@ import { Modal } from "@/components/ui/Modal";
 import { Asiento, CuentaContable, CreateAsientoPayload, Moneda } from "@/types";
 import { createAsiento } from "@/lib/asientoService";
 
-
 const detalleSchema = z.object({
   cuentaId: z.number({ invalid_type_error: "Seleccione una cuenta" }).min(1, "Seleccione una cuenta"),
-  concepto: z.string().min(1, "El concepto es obligatorio"),
   debe: z.number({ invalid_type_error: "Ingrese un número" }).min(0),
   haber: z.number({ invalid_type_error: "Ingrese un número" }).min(0),
 });
 
 const schema = z.object({
-  fecha: z.string().min(1, "La fecha es obligatoria"),
+  fechaAsiento: z.string().min(1, "La fecha es obligatoria"),
   descripcion: z.string().min(1, "La descripción es obligatoria"),
-  referencia: z.string().optional(),
-  estado: z.enum(["BORRADOR", "CONFIRMADO", "ANULADO"]),
   monedaId: z.number({ invalid_type_error: "Seleccione una moneda" }).min(1, "Seleccione una moneda"),
   tasaCambio: z.number({ invalid_type_error: "Ingrese la tasa" }).positive("La tasa debe ser positiva"),
   detalles: z.array(detalleSchema).min(2, "Se requieren al menos 2 líneas"),
@@ -38,8 +34,9 @@ interface Props {
   onClose: () => void;
   onSuccess: (a: Asiento) => void;
   cuentas: CuentaContable[];
-  monedas: Moneda[];        // ← nuevo
+  monedas: Moneda[];
 }
+
 const inputClass = "w-full px-3 py-2 rounded-xl border border-black/[0.10] bg-white text-sm text-apple-text placeholder:text-apple-secondary/60 outline-none transition-all focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400";
 const labelClass = "block text-xs font-semibold text-apple-secondary uppercase tracking-wider mb-1.5";
 const errClass  = "mt-1 text-xs text-red-500";
@@ -48,15 +45,15 @@ const thClass   = "text-[10px] font-semibold text-apple-secondary uppercase trac
 export default function AsientoFormModal({ open, onClose, onSuccess, cuentas, monedas }: Props) {
   const movibles = cuentas.filter(c => c.permiteMovimiento !== false && c.estado !== false);
   const today = new Date().toISOString().slice(0, 10);
+  const [apiError, setApiError] = useState<string | null>(null);
 
   const { register, handleSubmit, control, watch, setValue, formState: { errors, isSubmitting }, reset } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      fecha: today,
-      estado: "BORRADOR",
+      fechaAsiento: today,
       detalles: [
-        { cuentaId: 0, concepto: "", debe: 0, haber: 0 },
-        { cuentaId: 0, concepto: "", debe: 0, haber: 0 },
+        { cuentaId: 0, debe: 0, haber: 0 },
+        { cuentaId: 0, debe: 0, haber: 0 },
       ],
     },
   });
@@ -69,12 +66,30 @@ export default function AsientoFormModal({ open, onClose, onSuccess, cuentas, mo
 
   const onSubmit = async (data: FormData) => {
     try {
-      const saved = await createAsiento(data as unknown as CreateAsientoPayload);
+      setApiError(null);
+
+      // Transform form data → backend payload
+      const payload: CreateAsientoPayload = {
+        descripcion: data.descripcion,
+        fechaAsiento: data.fechaAsiento,
+        moneda: { id: data.monedaId },
+        tasaCambio: data.tasaCambio,
+        estado: true,
+        detalles: data.detalles
+          .filter(d => d.debe > 0 || d.haber > 0)
+          .map(d => ({
+            cuenta: { id: d.cuentaId },
+            tipoMovimiento: (d.debe > 0 ? "Debito" : "Credito") as "Debito" | "Credito",
+            monto: d.debe > 0 ? d.debe : d.haber,
+          })),
+      };
+
+      const saved = await createAsiento(payload);
       onSuccess(saved);
       reset();
       onClose();
     } catch (err: any) {
-      alert(err?.response?.data?.message || "Error guardando el asiento. Favor verificar en la consola.");
+      setApiError(err?.response?.data?.message || "Error guardando el asiento. Favor verificar en la consola.");
       console.error(err);
     }
   };
@@ -82,30 +97,22 @@ export default function AsientoFormModal({ open, onClose, onSuccess, cuentas, mo
   return (
     <Modal open={open} onClose={onClose} title="Nuevo Asiento Contable" subtitle="Registra un asiento de doble entrada" maxWidth="700px">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-        <div className="grid grid-cols-3 gap-3">
-          <div>
-            <label className={labelClass}>Fecha</label>
-            <input type="date" {...register("fecha")} className={inputClass} />
-            {errors.fecha && <p className={errClass}>{errors.fecha.message}</p>}
+        {apiError && (
+          <div className="px-4 py-2.5 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm">
+            {apiError}
           </div>
-          <div className="col-span-2">
-            <label className={labelClass}>Descripción</label>
-            <input {...register("descripcion")} placeholder="Concepto general del asiento" className={inputClass} />
-            {errors.descripcion && <p className={errClass}>{errors.descripcion.message}</p>}
-          </div>
-        </div>
+        )}
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className={labelClass}>Referencia (opcional)</label>
-            <input {...register("referencia")} placeholder="FAC-2026-001" className={inputClass} />
+            <label className={labelClass}>Fecha</label>
+            <input type="date" {...register("fechaAsiento")} className={inputClass} />
+            {errors.fechaAsiento && <p className={errClass}>{errors.fechaAsiento.message}</p>}
           </div>
           <div>
-            <label className={labelClass}>Estado</label>
-            <select {...register("estado")} className={inputClass}>
-              <option value="BORRADOR">Borrador</option>
-              <option value="CONFIRMADO">Confirmado</option>
-            </select>
+            <label className={labelClass}>Descripción</label>
+            <input {...register("descripcion")} placeholder="Concepto general del asiento" className={inputClass} />
+            {errors.descripcion && <p className={errClass}>{errors.descripcion.message}</p>}
           </div>
         </div>
 
@@ -136,7 +143,7 @@ export default function AsientoFormModal({ open, onClose, onSuccess, cuentas, mo
         <div>
           <div className="flex items-center justify-between mb-2">
             <label className={labelClass}>Líneas del Asiento</label>
-            <button type="button" onClick={() => append({ cuentaId: 0, concepto: "", debe: 0, haber: 0 })}
+            <button type="button" onClick={() => append({ cuentaId: 0, debe: 0, haber: 0 })}
               className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-700">
               <Plus size={12} /> Agregar línea
             </button>
@@ -146,10 +153,9 @@ export default function AsientoFormModal({ open, onClose, onSuccess, cuentas, mo
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-black/[0.06] bg-apple-gray/60">
-                  <th className={thClass} style={{width:"35%"}}>Cuenta</th>
-                  <th className={thClass}>Concepto</th>
-                  <th className={thClass} style={{width:"90px"}}>Debe</th>
-                  <th className={thClass} style={{width:"90px"}}>Haber</th>
+                  <th className={thClass} style={{width:"45%"}}>Cuenta</th>
+                  <th className={thClass} style={{width:"100px"}}>Debe</th>
+                  <th className={thClass} style={{width:"100px"}}>Haber</th>
                   <th className={thClass} style={{width:"32px"}} />
                 </tr>
               </thead>
@@ -162,9 +168,6 @@ export default function AsientoFormModal({ open, onClose, onSuccess, cuentas, mo
                         <option value={0}>— Cuenta —</option>
                         {movibles.map(c => <option key={c.id} value={c.id}>{c.codigo} — {c.nombre}</option>)}
                       </select>
-                    </td>
-                    <td className="px-1 py-1">
-                      <input {...register(`detalles.${idx}.concepto`)} placeholder="Concepto…" className="w-full px-2 py-1.5 rounded-lg border border-black/[0.08] text-xs bg-white outline-none focus:ring-1 focus:ring-blue-400" />
                     </td>
                     <td className="px-1 py-1">
                       <input type="number" step="0.01" {...register(`detalles.${idx}.debe`, { valueAsNumber: true })} placeholder="0.00" className="w-full px-2 py-1.5 rounded-lg border border-black/[0.08] text-xs bg-white outline-none focus:ring-1 focus:ring-blue-400 text-right" />
@@ -184,7 +187,7 @@ export default function AsientoFormModal({ open, onClose, onSuccess, cuentas, mo
               </tbody>
               <tfoot>
                 <tr className="border-t border-black/[0.06] bg-apple-gray/40">
-                  <td colSpan={2} className="px-3 py-2 text-xs font-semibold text-apple-secondary text-right">Totales:</td>
+                  <td className="px-3 py-2 text-xs font-semibold text-apple-secondary text-right">Totales:</td>
                   <td className="px-2 py-2 text-xs font-bold text-right font-mono">{totalDebe.toFixed(2)}</td>
                   <td className={`px-2 py-2 text-xs font-bold text-right font-mono ${cuadrado ? "text-green-600" : "text-red-500"}`}>{totalHaber.toFixed(2)}</td>
                   <td />

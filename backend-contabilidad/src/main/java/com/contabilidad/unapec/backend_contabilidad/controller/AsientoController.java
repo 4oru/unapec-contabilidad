@@ -1,12 +1,11 @@
 package com.contabilidad.unapec.backend_contabilidad.controller;
 
 import com.contabilidad.unapec.backend_contabilidad.model.Asiento;
-import com.contabilidad.unapec.backend_contabilidad.model.AsientoDetalle;
 import com.contabilidad.unapec.backend_contabilidad.service.AsientoService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,10 +35,10 @@ public class AsientoController {
 
     @PostMapping(produces = "application/json")
     @Operation(operationId = "registrarAsiento", summary = "Registrar un nuevo asiento con sus detalles")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Asiento creado exitosamente")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Datos de entrada inválidos")
+    @ApiResponse(responseCode = "201", description = "Asiento creado exitosamente")
+    @ApiResponse(responseCode = "400", description = "Datos de entrada inválidos")
     public ResponseEntity<Asiento> crear(@Valid @RequestBody Asiento asiento) {
-        return new ResponseEntity<>(service.create(asiento, asiento.getDetalles()), HttpStatus.CREATED);
+        return new ResponseEntity<>(service.create(asiento), HttpStatus.CREATED);
     }
 
     @DeleteMapping(value = "/{id}", produces = "application/json")

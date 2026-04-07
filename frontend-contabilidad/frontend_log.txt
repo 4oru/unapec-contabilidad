@@ -1,0 +1,9 @@
+
+> frontend-contabilidad@0.1.0 dev
+> next dev
+
+Γû▓ Next.js 16.1.7 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://169.254.83.107:3000
+
+Γ£ô Starting...

@@ -5,14 +5,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.3</version> <relativePath/> 
+		<version>3.4.3</version>
+		<relativePath/>
 	</parent>
 	<groupId>com.contabilidad.unapec</groupId>
 	<artifactId>backend-contabilidad</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
-	<url/>
+	<name>backend-contabilidad</name>
+	<description>Sistema de Contabilidad Central - UNAPEC</description>
 	<licenses>
 		<license/>
 	</licenses>

@@ -134,8 +134,8 @@ export default function DashboardPage() {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `${(v/1000).toFixed(0)}k`} />
-                <Tooltip formatter={(v: number) => `RD$ ${v.toLocaleString()}`} />
+                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v: number) => `${(v/1000).toFixed(0)}k`} />
+                <Tooltip formatter={(v: any) => `RD$ ${Number(v).toLocaleString()}`} />
                 <Legend />
                 <Area type="monotone" dataKey="ingresos" stroke="#34c759" fill="url(#colorIngresos)" strokeWidth={2} name="Ingresos" />
                 <Area type="monotone" dataKey="gastos"   stroke="#ff3b30" fill="url(#colorGastos)"   strokeWidth={2} name="Gastos" />
@@ -151,7 +151,7 @@ export default function DashboardPage() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis type="number" tick={{ fontSize: 11 }} />
                 <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={35} />
-                <Tooltip formatter={(v: number) => `${v} ${monedaBase}`} />
+                <Tooltip formatter={(v: any) => `${v} ${monedaBase}`} />
                 <Bar dataKey="tasa" fill="#0071e3" radius={[0, 6, 6, 0]} name="Tasa" />
               </BarChart>
             </ResponsiveContainer>
@@ -164,8 +164,8 @@ export default function DashboardPage() {
               <BarChart data={mockMensual}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                 <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} tickFormatter={v => `${(v/1000).toFixed(0)}k`} />
-                <Tooltip formatter={(v: number) => `RD$ ${v.toLocaleString()}`} />
+                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v: number) => `${(v/1000).toFixed(0)}k`} />
+                <Tooltip formatter={(v: any) => `RD$ ${Number(v).toLocaleString()}`} />
                 <Bar dataKey="balance" fill="#0071e3" radius={[6, 6, 0, 0]} name="Balance" />
               </BarChart>
             </ResponsiveContainer>

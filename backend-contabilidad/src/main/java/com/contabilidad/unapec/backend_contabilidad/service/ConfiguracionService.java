@@ -1,9 +1,11 @@
 package com.contabilidad.unapec.backend_contabilidad.service;
 
+import com.contabilidad.unapec.backend_contabilidad.exception.ResourceNotFoundException;
 import com.contabilidad.unapec.backend_contabilidad.model.Configuracion;
 import com.contabilidad.unapec.backend_contabilidad.repository.ConfiguracionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -18,8 +20,8 @@ public class ConfiguracionService {
 
     public Configuracion actualizar(Long id, String valor) {
         Configuracion config = configuracionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Configuración no encontrada"));
-        if (!config.getEditable()) {
+                .orElseThrow(() -> new ResourceNotFoundException("Configuración", id));
+        if (!Boolean.TRUE.equals(config.getEditable())) {
             throw new IllegalArgumentException("Esta configuración es de solo lectura.");
         }
         config.setValor(valor);

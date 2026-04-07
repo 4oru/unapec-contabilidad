@@ -1,73 +1,41 @@
 package com.contabilidad.unapec.backend_contabilidad.service;
 
+import com.contabilidad.unapec.backend_contabilidad.exception.ResourceNotFoundException;
 import com.contabilidad.unapec.backend_contabilidad.model.CuentaContable;
 import com.contabilidad.unapec.backend_contabilidad.repository.CuentaContableRepository;
 import com.contabilidad.unapec.backend_contabilidad.repository.TipoCuentaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CuentaContableService {
 
-    @Autowired
-    private CuentaContableRepository repository;
-
-    @Autowired
-    private TipoCuentaRepository tipoRepository;
+    private final CuentaContableRepository repository;
+    private final TipoCuentaRepository tipoRepository;
 
     public List<CuentaContable> findAll() {
         return repository.findAll();
     }
 
     public CuentaContable getById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Cuenta contable no encontrada"));
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cuenta contable", id));
     }
 
     public CuentaContable create(CuentaContable cuenta) {
-        // 1. Validar Tipo de Cuenta
-        if (cuenta.getTipo() == null || cuenta.getTipo().getId() == null) {
-            throw new IllegalArgumentException("El tipo de cuenta es obligatorio");
-        }
-        if (!tipoRepository.existsById(cuenta.getTipo().getId())) {
-            throw new IllegalArgumentException("El tipo de cuenta con ID " + cuenta.getTipo().getId() + " no existe");
-        }
-
-        // 2. Validar Cuenta Mayor
-        if (cuenta.getCuentaMayor() != null && cuenta.getCuentaMayor().getId() != null) {
-            CuentaContable mayor = getById(cuenta.getCuentaMayor().getId());
-            if (mayor.getPermiteMovimiento() != null && mayor.getPermiteMovimiento()) {
-                throw new IllegalArgumentException("La cuenta superior '" + mayor.getNombre() + "' no puede ser padre porque permite movimientos directos (debe ser de agrupación)");
-            }
-        }
+        validateTipoCuenta(cuenta);
+        validateCuentaMayor(cuenta, null);
         return repository.save(cuenta);
     }
 
     public CuentaContable update(Long id, CuentaContable data) {
         CuentaContable existing = getById(id);
-        
-        // 1. Validar Tipo de Cuenta
-        if (data.getTipo() == null || data.getTipo().getId() == null) {
-            throw new IllegalArgumentException("El tipo de cuenta es obligatorio");
-        }
-        if (!tipoRepository.existsById(data.getTipo().getId())) {
-            throw new IllegalArgumentException("El tipo de cuenta con ID " + data.getTipo().getId() + " no existe");
-        }
 
-        // 2. Validar Cuenta Mayor
-        if (data.getCuentaMayor() != null && data.getCuentaMayor().getId() != null) {
-            if (id.equals(data.getCuentaMayor().getId())) {
-                throw new IllegalArgumentException("Una cuenta no puede ser su propia cuenta mayor");
-            }
-            CuentaContable mayor = getById(data.getCuentaMayor().getId());
-            if (mayor.getPermiteMovimiento() != null && mayor.getPermiteMovimiento()) {
-                throw new IllegalArgumentException("La cuenta superior '" + mayor.getNombre() + "' no puede ser padre porque permite movimientos directos");
-            }
-            existing.setCuentaMayor(data.getCuentaMayor());
-        } else {
-            existing.setCuentaMayor(null);
-        }
+        validateTipoCuenta(data);
+        validateCuentaMayor(data, id);
 
         existing.setCodigo(data.getCodigo());
         existing.setNombre(data.getNombre());
@@ -76,10 +44,46 @@ public class CuentaContableService {
         existing.setTipo(data.getTipo());
         existing.setNivel(data.getNivel());
         existing.setEstado(data.getEstado());
+        existing.setCuentaMayor(
+                (data.getCuentaMayor() != null && data.getCuentaMayor().getId() != null)
+                        ? data.getCuentaMayor()
+                        : null
+        );
+
         return repository.save(existing);
     }
 
     public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Cuenta contable", id);
+        }
         repository.deleteById(id);
+    }
+
+    // ── Private helpers ─────────────────────────────────────────────────────
+
+    private void validateTipoCuenta(CuentaContable cuenta) {
+        if (cuenta.getTipo() == null || cuenta.getTipo().getId() == null) {
+            throw new IllegalArgumentException("El tipo de cuenta es obligatorio");
+        }
+        if (!tipoRepository.existsById(cuenta.getTipo().getId())) {
+            throw new IllegalArgumentException(
+                    "El tipo de cuenta con ID " + cuenta.getTipo().getId() + " no existe");
+        }
+    }
+
+    private void validateCuentaMayor(CuentaContable cuenta, Long currentId) {
+        if (cuenta.getCuentaMayor() == null || cuenta.getCuentaMayor().getId() == null) {
+            return;
+        }
+        if (currentId != null && currentId.equals(cuenta.getCuentaMayor().getId())) {
+            throw new IllegalArgumentException("Una cuenta no puede ser su propia cuenta mayor");
+        }
+        CuentaContable mayor = getById(cuenta.getCuentaMayor().getId());
+        if (Boolean.TRUE.equals(mayor.getPermiteMovimiento())) {
+            throw new IllegalArgumentException(
+                    "La cuenta superior '" + mayor.getNombre()
+                            + "' no puede ser padre porque permite movimientos directos (debe ser de agrupación)");
+        }
     }
 }

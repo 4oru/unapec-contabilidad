@@ -1,5 +1,4 @@
 import apiClient from "@/lib/apiClient";
-import { ApiResponse } from "@/types";
 
 // Adding Auxiliar to the global types inline for simplification, 
 // usually it would be in types/index.ts but we can define it here and export it.

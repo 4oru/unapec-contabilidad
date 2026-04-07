@@ -1,9 +1,5 @@
 import apiClient from "@/lib/apiClient";
-import {
-  CuentaContable,
-  CreateCuentaPayload,
-  UpdateCuentaPayload,
-} from "@/types";
+import { CuentaContable, CreateCuentaPayload, UpdateCuentaPayload } from "@/types";
 
 const BASE = "/api/cuentas-contables";
 
@@ -17,23 +13,13 @@ export async function getCuentaById(id: number): Promise<CuentaContable> {
   return data;
 }
 
-const TIPO_MAP: Record<string, number> = {
-  ACTIVO: 1,
-  PASIVO: 2,
-  PATRIMONIO: 3,
-  INGRESO: 4,
-  GASTO: 5
-};
-
 export async function createCuenta(payload: CreateCuentaPayload): Promise<CuentaContable> {
-  const mapped = { ...payload, tipo: { id: TIPO_MAP[payload.tipo] } };
-  const { data } = await apiClient.post<CuentaContable>(BASE, mapped);
+  const { data } = await apiClient.post<CuentaContable>(BASE, payload);
   return data;
 }
 
 export async function updateCuenta(id: number, payload: UpdateCuentaPayload): Promise<CuentaContable> {
-  const mapped = { ...payload, tipo: payload.tipo ? { id: TIPO_MAP[payload.tipo] } : undefined };
-  const { data } = await apiClient.put<CuentaContable>(`${BASE}/${id}`, mapped);
+  const { data } = await apiClient.put<CuentaContable>(`${BASE}/${id}`, payload);
   return data;
 }
 
@@ -41,3 +27,24 @@ export async function deleteCuenta(id: number): Promise<void> {
   await apiClient.delete(`${BASE}/${id}`);
 }
 
+export function buildCuentaPayload(formData: {
+  codigo: string;
+  nombre: string;
+  descripcion?: string;
+  tipoId: number;      // Changed from 'tipo: string'
+  nivel: number;
+  permiteMovimiento: boolean;
+  estado: boolean;
+  cuentaMayorId?: number | null;
+}): CreateCuentaPayload {
+  return {
+    codigo: formData.codigo,
+    nombre: formData.nombre,
+    descripcion: formData.descripcion || "",
+    tipo: { id: Number(formData.tipoId) },
+    nivel: formData.nivel,
+    permiteMovimiento: formData.permiteMovimiento,
+    estado: formData.estado,
+    cuentaMayor: formData.cuentaMayorId ? { id: Number(formData.cuentaMayorId) } : null,
+  };
+}

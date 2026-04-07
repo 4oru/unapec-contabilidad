@@ -1,16 +1,16 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Plus, RefreshCw, Search, TreePine, ChevronRight, Pencil, Trash2 } from "lucide-react";
+import { Plus, RefreshCw, Search, TreePine, Pencil, Trash2 } from "lucide-react";
 import Header from "@/components/layout/Header";
 import { StatusBadge } from "@/components/ui/StatusBadge";
-import { CuentaContable, TipoCuenta } from "@/types";
+import { CuentaContable, TipoCuenta, getTipoNombre } from "@/types";
 import { getCuentas, deleteCuenta } from "@/lib/cuentaService";
 import { useTenant } from "@/lib/tenantService";
 import CuentaFormModal from "./components/CuentaFormModal";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
-const TIPO_COLORS: Record<TipoCuenta, string> = {
+const DEFAULT_TIPO_COLORS: Record<string, string> = {
   ACTIVO:     "bg-blue-50 text-blue-700",
   PASIVO:     "bg-red-50 text-red-700",
   PATRIMONIO: "bg-purple-50 text-purple-700",
@@ -18,11 +18,7 @@ const TIPO_COLORS: Record<TipoCuenta, string> = {
   GASTO:      "bg-orange-50 text-orange-700",
 };
 
-function getTipoNombre(tipo: any): string {
-  if (!tipo) return "";
-  if (typeof tipo === "string") return tipo.toUpperCase();
-  return (tipo?.nombre || "").toUpperCase();
-}
+const getTipoColor = (name: string) => DEFAULT_TIPO_COLORS[name.toUpperCase()] || "bg-gray-50 text-gray-700";
 
 function saldoStr(saldo: number) {
   const val = typeof saldo === "number" && !isNaN(saldo) ? saldo : 0;
@@ -30,14 +26,16 @@ function saldoStr(saldo: number) {
 }
 
 function getRecursiveSaldo(cuenta: CuentaContable, allCuentas: CuentaContable[]): number {
-  if (cuenta.permiteMovimiento) return Number(cuenta.saldo) || 0;
-  const children = allCuentas.filter((c) => c.cuentaPadreId === cuenta.id);
+  if (cuenta.permiteMovimiento) return Number(cuenta.balance) || 0;
+  const children = allCuentas.filter((c) => c.cuentaMayor?.id === cuenta.id);
   return children.reduce((sum, c) => sum + getRecursiveSaldo(c, allCuentas), 0);
 }
 
 function CuentaRow({ cuenta, nivel, expanded, onToggle, onEdit, onDelete, allCuentas }: { cuenta: CuentaContable; nivel: number; expanded: boolean; onToggle: () => void; onEdit: (c: CuentaContable) => void; onDelete: (c: CuentaContable) => void; allCuentas: CuentaContable[] }) {
   const isParent = !cuenta.permiteMovimiento;
   const saldo = getRecursiveSaldo(cuenta, allCuentas);
+  const tipoNombre = getTipoNombre(cuenta.tipo);
+  const origen = cuenta.tipo && typeof cuenta.tipo === "object" ? cuenta.tipo.origen : undefined;
 
   return (
     <div className={`flex items-center gap-2 px-4 py-1.5 border-b border-black/[0.03] table-row-hover cursor-default ${isParent ? "bg-black/[0.02] border-b-black/[0.06] font-semibold" : ""}`}>
@@ -58,13 +56,13 @@ function CuentaRow({ cuenta, nivel, expanded, onToggle, onEdit, onDelete, allCue
       </div>
 
       <div className="hidden md:block w-24 text-center flex-shrink-0">
-        <span className={`inline-flex text-[11px] font-semibold px-2 py-0.5 rounded-full ${TIPO_COLORS[getTipoNombre(cuenta.tipo) as TipoCuenta] || "bg-gray-50 text-gray-700"}`}>
-          {getTipoNombre(cuenta.tipo) || "—"}
+        <span className={`inline-flex text-[11px] font-semibold px-2 py-0.5 rounded-full ${getTipoColor(tipoNombre)}`}>
+          {tipoNombre || "—"}
         </span>
       </div>
 
       <span className="hidden lg:block text-xs text-apple-secondary flex-shrink-0 w-20 text-right">
-        {cuenta.origen?.toUpperCase() === "DEBITO" ? "Deudora" : cuenta.origen?.toUpperCase() === "CREDITO" ? "Acreedora" : cuenta.origen || "—"}
+        {origen?.toUpperCase() === "DEBITO" ? "Deudora" : origen?.toUpperCase() === "CREDITO" ? "Acreedora" : origen || "—"}
       </span>
 
       <span className="text-sm font-mono text-right flex-shrink-0 w-36 hidden md:block">
@@ -164,17 +162,19 @@ export default function CuentasPage() {
 
   function isVisible(cuenta: CuentaContable): boolean {
     if (search) return true;
-    if (!cuenta.cuentaPadreId) return true;
-    const padre = cuentas.find((c) => c.id === cuenta.cuentaPadreId);
+    if (!cuenta.cuentaMayor) return true;
+    const padre = cuentas.find((c) => c.id === cuenta.cuentaMayor?.id);
     if (!padre) return true;
     return expanded.has(padre.id) && isVisible(padre);
   }
 
   const visibleCuentas = filtered.filter(isVisible);
 
+  const tiposUnicos = Array.from(new Set(cuentas.map(c => getTipoNombre(c.tipo)).filter(Boolean)));
+
   const totalActivos = cuentas
     .filter(c => getTipoNombre(c.tipo) === "ACTIVO" && c.permiteMovimiento)
-    .reduce((s, c) => s + (Number(c.saldo) || 0), 0);
+    .reduce((s, c) => s + (Number(c.balance) || 0), 0);
 
   return (
     <div className="flex flex-col h-full">
@@ -183,12 +183,12 @@ export default function CuentasPage() {
       <div className="flex-1 p-8 space-y-5">
         {/* Summary cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          {(["ACTIVO","PASIVO","PATRIMONIO","INGRESO","GASTO"] as TipoCuenta[]).map((tipoNombre: any) => {
-            const rootCuentas = cuentas.filter(c => getTipoNombre(c.tipo) === tipoNombre && !c.cuentaPadreId);
+          {tiposUnicos.map((tipoNombre) => {
+            const rootCuentas = cuentas.filter(c => getTipoNombre(c.tipo) === tipoNombre && !c.cuentaMayor);
             const totalSaldo = rootCuentas.reduce((s, c) => s + getRecursiveSaldo(c, cuentas), 0);
             return (
               <div key={tipoNombre} className="bg-white rounded-2xl border border-black/[0.06] shadow-apple px-4 py-3">
-                <p className={`text-[11px] font-bold ${TIPO_COLORS[tipoNombre]} inline-block px-2 py-0.5 rounded-lg`}>{tipoNombre}</p>
+                <p className={`text-[11px] font-bold ${getTipoColor(tipoNombre)} inline-block px-2 py-0.5 rounded-lg`}>{tipoNombre}</p>
                 <p className="text-base font-bold text-apple-text mt-1.5">{saldoStr(totalSaldo)}</p>
               </div>
             );

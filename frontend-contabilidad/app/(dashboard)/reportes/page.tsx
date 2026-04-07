@@ -4,11 +4,10 @@ import { useState, useEffect, useCallback } from "react";
 import { BarChart3, TrendingUp, TrendingDown, Scale, Download, RefreshCw, Calendar } from "lucide-react";
 import Header from "@/components/layout/Header";
 import { BentoCard } from "@/components/ui/BentoCard";
-import { FilaBalanza, TipoCuenta } from "@/types";
+import { FilaBalanza, TipoCuenta, CuentaContable, Asiento, getTipoNombre, getDebeHaber } from "@/types";
 import { useTenant } from "@/lib/tenantService";
 import { getCuentas } from "@/lib/cuentaService";
 import { getAsientos } from "@/lib/asientoService";
-import { CuentaContable, Asiento } from "@/types";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -26,19 +25,34 @@ function money(n: number) {
 
 function buildBalanza(cuentasDb: CuentaContable[], asientosDb: Asiento[]): FilaBalanza[] {
   return cuentasDb
-    .filter((c) => c.aceptaMovimientos)
+    .filter((c) => c.permiteMovimiento)
     .map((c) => {
-      const debe = asientosDb.flatMap(a => a.detalles.filter(d => d.cuenta?.codigo === c.codigo || d.cuentaId === c.id)).reduce((s, d) => s + d.debe, 0);
-      const haber = asientosDb.flatMap(a => a.detalles.filter(d => d.cuenta?.codigo === c.codigo || d.cuentaId === c.id)).reduce((s, d) => s + d.haber, 0);
+      // Flatten all details from all asientos and find matching ones for this cuenta
+      let debe = 0;
+      let haber = 0;
+      for (const a of asientosDb) {
+        for (const d of a.detalles) {
+          if (d.cuenta?.codigo === c.codigo || d.cuenta?.id === c.id) {
+            const dh = getDebeHaber(d);
+            debe += dh.debe;
+            haber += dh.haber;
+          }
+        }
+      }
+
+      // Determine naturaleza from tipo.origen
+      const origen = (c.tipo && typeof c.tipo === "object" ? c.tipo.origen : "")?.toUpperCase();
+      const esDeudora = origen === "DEBITO";
+
       return {
         cuentaId: c.id,
         codigo: c.codigo,
         nombre: c.nombre,
-        tipo: (c.tipo as any)?.nombre || "ACTIVO",
+        tipo: (getTipoNombre(c.tipo) || "ACTIVO") as TipoCuenta,
         saldoAnterior: 0,
         movimientosDebe: debe,
         movimientosHaber: haber,
-        saldoFinal: c.naturaleza === "DEUDORA" ? debe - haber : haber - debe,
+        saldoFinal: esDeudora ? debe - haber : haber - debe,
       };
     })
     .filter((f) => f.movimientosDebe > 0 || f.movimientosHaber > 0 || f.saldoFinal !== 0);

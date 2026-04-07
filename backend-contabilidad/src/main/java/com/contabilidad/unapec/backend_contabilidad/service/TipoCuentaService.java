@@ -1,24 +1,26 @@
 package com.contabilidad.unapec.backend_contabilidad.service;
 
+import com.contabilidad.unapec.backend_contabilidad.exception.ResourceNotFoundException;
 import com.contabilidad.unapec.backend_contabilidad.model.TipoCuenta;
 import com.contabilidad.unapec.backend_contabilidad.repository.TipoCuentaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TipoCuentaService {
 
-    @Autowired
-    private TipoCuentaRepository repository;
+    private final TipoCuentaRepository repository;
 
     public List<TipoCuenta> findAll() {
         return repository.findAll();
     }
 
     public TipoCuenta getById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Tipo de cuenta no encontrado"));
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Tipo de cuenta", id));
     }
 
     public TipoCuenta create(TipoCuenta tipoCuenta) {
@@ -35,6 +37,9 @@ public class TipoCuentaService {
     }
 
     public void delete(Long id) {
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Tipo de cuenta", id);
+        }
         repository.deleteById(id);
     }
 }
