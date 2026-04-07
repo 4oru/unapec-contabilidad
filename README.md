@@ -4,6 +4,26 @@ Este proyecto es el **núcleo de integración** para la asignatura de Integraci�
 
 ---
 
+## 🌎 Despliegue en Producción (Live Demo)
+
+El sistema se encuentra desplegado y operativo en una VPS dedicada. Puedes acceder mediante los siguientes enlaces:
+
+| Servicio | URL de Acceso |
+| :--- | :--- |
+| **📊 Dashboard (Web)** | [http://151.242.194.24/](http://151.242.194.24/) |
+| **📘 Documentación API (Swagger)** | [http://151.242.194.24/api/swagger-ui.html](http://151.242.194.24/api/swagger-ui.html) |
+
+---
+
+### 🗄️ Acceso Remoto a Base de Datos (DBeaver/Navicat)
+Para gestionar los datos directamente desde tu PC personal, utiliza esta configuración:
+- **Host**: `151.242.194.24`
+- **Port**: `5434` (Puerto externo mapeado)
+- **Database**: `contabilidad_db`
+- **User**: `USER_DB` | **Pass**: `2026DB`
+
+---
+
 ## 🛠️ Stack Tecnológico
 
 ### ☕ Back-end & Datos
@@ -118,3 +138,4 @@ El sistema utiliza las siguientes variables (configuradas por defecto en `docker
 
 ## 👨‍💻 Autor
 * **Alan Roman** - UNAPEC (ID: A00116751)
+* **Desplegado por**: Antigravity (AI DevOps Engineer)

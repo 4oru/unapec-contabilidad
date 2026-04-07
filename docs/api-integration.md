@@ -10,7 +10,8 @@ Este es el endpoint más importante del sistema. Permite la ingesta masiva de mo
 
 *   **Método:** `POST`
 *   **Endpoint:** `/api/asientos`
-*   **URL Base (Docker):** `http://localhost:8080`
+*   **URL Base (Local):** `http://localhost:8080`
+*   **URL Base (Producción):** `http://151.242.194.24/api`
 *   **Content-Type:** `application/json`
 
 ---
@@ -77,7 +78,8 @@ El servidor rechazará la solicitud (`400 Bad Request`) si:
 
 Para explorar todos los demás endpoints de consulta (`GET /api/cuentas`, `GET /api/monedas`, etc.), utiliza el Swagger UI:
 
-👉 [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+👉 **Local**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+👉 **Producción**: [http://151.242.194.24/api/swagger-ui.html](http://151.242.194.24/api/swagger-ui.html)
 
 > [!TIP]
 > Te recomendamos usar Swagger para generar automáticamente los clientes de código en lenguajes como C#, Python o Java.

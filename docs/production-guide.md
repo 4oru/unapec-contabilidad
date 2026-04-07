@@ -40,7 +40,7 @@ docker-compose up --build -d
 ```
 
 ### **¿Qué está sucediendo internamente?**
-*   **Base de Datos**: Se levanta PostgreSQL 16 y crea el volumen persistente en `./postgres-data`.
+*   **Base de Datos**: Se levanta PostgreSQL 16 y crea el volumen persistente nombrado `accounting-db-data`.
 *   **Backend**: Se compila el código Java 21, se empaqueta el `.jar` y se levanta en el puerto 8080. El servicio esperará hasta que la DB esté lista (*Healthcheck*).
 *   **Frontend**: Se construye Next.js en modo producción y se sirve en el puerto 3000.
 
@@ -55,12 +55,14 @@ docker-compose up --build -d
     *Asegúrate de que 'backend-unapec' diga '(healthy)'.*
 
 2.  **Probar Endpoints (Acceso Centralizado)**:
-    -   🚀 **Dashboard**: `http://<IP-DE-TU-VPS>/` (Puerto 80)
-    -   📘 **Swagger UI**: `http://<IP-DE-TU-VPS>/api/swagger-ui.html`
+    -   🚀 **Dashboard**: [http://151.242.194.24/](http://151.242.194.24/)
+    -   📘 **Swagger UI**: [http://151.242.194.24/api/swagger-ui.html](http://151.242.194.24/api/swagger-ui.html)
 
-### **Puertos Auxiliares (Debug)**:
-- Dashboard Directo: `http://<IP-DE-TU-VPS>:3000`
-- API Directo: `http://<IP-DE-TU-VPS>:8080/swagger-ui.html`
+### **🗄️ Acceso Remoto de Base de Datos (DBeaver)**:
+- **Host**: `151.242.194.24`
+- **Port**: `5434`
+- **Database**: `contabilidad_db`
+- **User/Pass**: `USER_DB` / `2026DB`
 
 ---
 
