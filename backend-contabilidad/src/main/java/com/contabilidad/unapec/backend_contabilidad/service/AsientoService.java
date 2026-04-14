@@ -1,5 +1,6 @@
 package com.contabilidad.unapec.backend_contabilidad.service;
 
+import com.contabilidad.unapec.backend_contabilidad.dto.AsientoResponseDTO;
 import com.contabilidad.unapec.backend_contabilidad.exception.ResourceNotFoundException;
 import com.contabilidad.unapec.backend_contabilidad.model.Asiento;
 import com.contabilidad.unapec.backend_contabilidad.model.AsientoDetalle;
@@ -11,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,13 +20,19 @@ public class AsientoService {
 
     private final AsientoRepository asientoRepository;
 
-    public List<Asiento> findAll() {
-        return asientoRepository.findAll();
+    /** Devuelve todos los asientos como DTOs enriquecidos (incluye auxiliar y moneda). */
+    public List<AsientoResponseDTO> findAll() {
+        return asientoRepository.findAll()
+                .stream()
+                .map(AsientoResponseDTO::from)
+                .collect(Collectors.toList());
     }
 
-    public Asiento getById(Long id) {
-        return asientoRepository.findById(id)
+    /** Devuelve un asiento por ID como DTO enriquecido. */
+    public AsientoResponseDTO getById(Long id) {
+        Asiento asiento = asientoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Asiento", id));
+        return AsientoResponseDTO.from(asiento);
     }
 
     @Transactional

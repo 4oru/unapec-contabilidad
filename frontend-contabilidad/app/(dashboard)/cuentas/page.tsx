@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { Plus, RefreshCw, Search, TreePine, Pencil, Trash2 } from "lucide-react";
 import Header from "@/components/layout/Header";
 import { StatusBadge } from "@/components/ui/StatusBadge";
@@ -25,8 +25,16 @@ function saldoStr(saldo: number) {
   return new Intl.NumberFormat("es-DO", { style: "currency", currency: "DOP", minimumFractionDigits: 2 }).format(val);
 }
 
+/**
+ * Reads the leaf-account balance using a safe fallback chain:
+ * c.balance (canonical) → c.saldo → c.saldoActual → 0
+ * For parent accounts, sums children recursively.
+ */
 function getRecursiveSaldo(cuenta: CuentaContable, allCuentas: CuentaContable[]): number {
-  if (cuenta.permiteMovimiento) return Number(cuenta.balance) || 0;
+  if (cuenta.permiteMovimiento) {
+    const raw = (cuenta as any).balance ?? (cuenta as any).saldo ?? (cuenta as any).saldoActual ?? 0;
+    return Number(raw) || 0;
+  }
   const children = allCuentas.filter((c) => c.cuentaMayor?.id === cuenta.id);
   return children.reduce((sum, c) => sum + getRecursiveSaldo(c, allCuentas), 0);
 }
@@ -172,20 +180,58 @@ export default function CuentasPage() {
 
   const tiposUnicos = Array.from(new Set(cuentas.map(c => getTipoNombre(c.tipo)).filter(Boolean)));
 
-  const totalActivos = cuentas
-    .filter(c => getTipoNombre(c.tipo) === "ACTIVO" && c.permiteMovimiento)
-    .reduce((s, c) => s + (Number(c.balance) || 0), 0);
+  // ── useMemo: KPIs de tarjetas — se recalcula solo cuando cambia `cuentas` ──
+  const { totalActivos, totalPasivos, totalGastos, activosConMovimiento } = useMemo(() => {
+    /**
+     * Lee el saldo de una cuenta hoja con cadena de fallback:
+     * balance (campo canónico del backend) → saldo → saldoActual → 0
+     */
+    const getSaldo = (c: CuentaContable): number => {
+      const raw = (c as any).balance ?? (c as any).saldo ?? (c as any).saldoActual ?? 0;
+      return Number(raw) || 0;
+    };
+
+    const hojasActivos  = cuentas.filter(c => getTipoNombre(c.tipo) === "ACTIVO"  && c.permiteMovimiento);
+    const hojasPasivos  = cuentas.filter(c => getTipoNombre(c.tipo) === "PASIVO"  && c.permiteMovimiento);
+    const hojasGastos   = cuentas.filter(c => [
+      "GASTO", "GASTOS", "COSTO", "COSTOS",
+    ].includes(getTipoNombre(c.tipo)) && c.permiteMovimiento);
+
+    const totalActivos  = hojasActivos.reduce((s, c) => s + getSaldo(c), 0);
+    const totalPasivos  = hojasPasivos.reduce((s, c) => s + getSaldo(c), 0);
+    const totalGastos   = hojasGastos.reduce((s, c)  => s + getSaldo(c), 0);
+
+    // Activos con movimiento: activos hoja cuyo saldo es != 0
+    const activosConMovimiento = hojasActivos.filter(c => getSaldo(c) !== 0).length;
+
+    return { totalActivos, totalPasivos, totalGastos, activosConMovimiento };
+  }, [cuentas]);
 
   return (
     <div className="flex flex-col h-full">
       <Header title="Plan de Cuentas" subtitle="Catálogo de cuentas contables" />
 
       <div className="flex-1 p-8 space-y-5">
-        {/* Summary cards */}
+        {/* Summary cards — valores calculados por useMemo */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {tiposUnicos.map((tipoNombre) => {
-            const rootCuentas = cuentas.filter(c => getTipoNombre(c.tipo) === tipoNombre && !c.cuentaMayor);
-            const totalSaldo = rootCuentas.reduce((s, c) => s + getRecursiveSaldo(c, cuentas), 0);
+            // Usar los KPIs pre-calculados para los 3 tipos principales;
+            // para PATRIMONIO, INGRESO y cualquier otro tipo custom, recalcular recursivamente.
+            const KPI_MAP: Record<string, number> = {
+              ACTIVO:  totalActivos,
+              ACTIVOS: totalActivos,
+              PASIVO:  totalPasivos,
+              PASIVOS: totalPasivos,
+              GASTO:   totalGastos,
+              GASTOS:  totalGastos,
+              COSTO:   totalGastos,
+              COSTOS:  totalGastos,
+            };
+            const totalSaldo = KPI_MAP[tipoNombre] !== undefined
+              ? KPI_MAP[tipoNombre]
+              : cuentas
+                  .filter(c => getTipoNombre(c.tipo) === tipoNombre && !c.cuentaMayor)
+                  .reduce((s, c) => s + getRecursiveSaldo(c, cuentas), 0);
             return (
               <div key={tipoNombre} className="bg-white rounded-2xl border border-black/[0.06] shadow-apple px-4 py-3">
                 <p className={`text-[11px] font-bold ${getTipoColor(tipoNombre)} inline-block px-2 py-0.5 rounded-lg`}>{tipoNombre}</p>
@@ -256,7 +302,11 @@ export default function CuentasPage() {
           )}
         </div>
 
-        <p className="text-xs text-apple-secondary">Total activos con movimiento: <strong>{saldoStr(totalActivos)}</strong></p>
+        <p className="text-xs text-apple-secondary">
+          Total activos con movimiento:{" "}
+          <strong>{activosConMovimiento} cuenta{activosConMovimiento !== 1 ? "s" : ""}</strong>{" — "}saldo total:{" "}
+          <strong>{saldoStr(totalActivos)}</strong>
+        </p>
       </div>
 
       <CuentaFormModal

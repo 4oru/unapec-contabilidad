@@ -69,7 +69,7 @@ export default function AsientosPage() {
       header: "Número",
       accessor: (a) => <code className="text-xs font-mono font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-lg">{`ASI-${a.id}`}</code>,
       exportValue: (a) => `ASI-${a.id}`,
-      width: "140px",
+      width: "110px",
     },
     {
       header: "Fecha",
@@ -85,6 +85,27 @@ export default function AsientosPage() {
         </div>
       ),
       exportValue: (a) => a.descripcion + (a.referencia ? ` (Ref: ${a.referencia})` : ""),
+    },
+    {
+      header: "Auxiliar",
+      accessor: (a) => a.auxiliar
+        ? <span className="inline-flex items-center text-[11px] font-semibold px-2 py-0.5 rounded-full bg-purple-50 text-purple-700">{a.auxiliar.nombre}</span>
+        : <span className="text-apple-secondary/40 text-xs">—</span>,
+      exportValue: (a) => a.auxiliar?.nombre ?? "—",
+      width: "130px",
+    },
+    {
+      header: "Moneda",
+      accessor: (a) => a.moneda
+        ? (
+          <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">
+            <span className="font-mono">{a.moneda.codigoIso}</span>
+            <span className="text-amber-500 font-normal">{a.moneda.simbolo}</span>
+          </span>
+        )
+        : <span className="text-apple-secondary/40 text-xs">—</span>,
+      exportValue: (a) => a.moneda ? `${a.moneda.codigoIso} (${a.moneda.simbolo})` : "—",
+      width: "100px",
     },
     {
       header: "Debe",
@@ -178,12 +199,41 @@ export default function AsientosPage() {
       <Modal open={!!detailAsiento} onClose={() => setDetailAsiento(null)} title={`Asiento ASI-${detailAsiento?.id || ""}`} subtitle={detailAsiento?.descripcion} maxWidth="640px">
         {detailAsiento && (
           <div className="space-y-4">
+            {/* Fila 1: fecha, estado, referencia */}
             <div className="grid grid-cols-3 gap-3 text-sm">
               <div><p className="text-xs text-apple-secondary font-semibold uppercase tracking-wider mb-0.5">Fecha</p><p>{new Date(detailAsiento.fechaAsiento || "").toLocaleDateString("es-DO", { day:"2-digit", month:"long", year:"numeric"})}</p></div>
               <div><p className="text-xs text-apple-secondary font-semibold uppercase tracking-wider mb-0.5">Referencia</p><p>{detailAsiento.referencia || "—"}</p></div>
               <div><p className="text-xs text-apple-secondary font-semibold uppercase tracking-wider mb-0.5">Estado</p><EstadoBadge estado={detailAsiento.estado} /></div>
             </div>
 
+            {/* Fila 2: auxiliar y moneda */}
+            <div className="grid grid-cols-2 gap-3 text-sm bg-apple-gray/40 rounded-xl px-4 py-3">
+              <div>
+                <p className="text-xs text-apple-secondary font-semibold uppercase tracking-wider mb-1">Auxiliar</p>
+                {detailAsiento.auxiliar
+                  ? <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-50 text-purple-700">{detailAsiento.auxiliar.nombre}</span>
+                  : <span className="text-sm text-apple-secondary">Sin auxiliar</span>
+                }
+              </div>
+              <div>
+                <p className="text-xs text-apple-secondary font-semibold uppercase tracking-wider mb-1">Moneda</p>
+                {detailAsiento.moneda
+                  ? (
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-50 text-amber-700">
+                      <span className="font-mono">{detailAsiento.moneda.codigoIso}</span>
+                      <span className="text-amber-400">·</span>
+                      <span>{detailAsiento.moneda.nombre}</span>
+                      {detailAsiento.moneda.tasaCambio && detailAsiento.moneda.tasaCambio !== 1 && (
+                        <span className="font-normal text-amber-500">({detailAsiento.moneda.tasaCambio})</span>
+                      )}
+                    </span>
+                  )
+                  : <span className="text-sm text-apple-secondary">—</span>
+                }
+              </div>
+            </div>
+
+            {/* Detalles del asiento */}
             <div className="rounded-xl border border-black/[0.08] overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
@@ -197,11 +247,14 @@ export default function AsientosPage() {
                 <tbody>
                   {detailAsiento.detalles.map((d, i) => {
                     const { debe, haber } = getDebeHaber(d);
+                    // Compatibilidad: soporta tanto el DTO plano como el objeto anidado legacy
+                    const codigo = d.cuentaCodigo ?? d.cuenta?.codigo;
+                    const nombre = d.cuentaNombre ?? d.cuenta?.nombre;
                     return (
                       <tr key={i} className="border-b border-black/[0.04] last:border-0">
                         <td className="px-3 py-2.5">
-                          <p className="font-mono text-xs text-blue-600">{d.cuenta?.codigo}</p>
-                          <p className="text-xs text-apple-secondary">{d.cuenta?.nombre}</p>
+                          <p className="font-mono text-xs text-blue-600">{codigo}</p>
+                          <p className="text-xs text-apple-secondary">{nombre}</p>
                         </td>
                         <td className="px-3 py-2.5 text-xs text-apple-secondary">{d.tipoMovimiento}</td>
                         <td className="px-3 py-2.5 text-right font-mono text-sm">{debe > 0 ? saldoStr(debe) : "—"}</td>

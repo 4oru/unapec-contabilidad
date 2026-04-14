@@ -1,5 +1,6 @@
 package com.contabilidad.unapec.backend_contabilidad.controller;
 
+import com.contabilidad.unapec.backend_contabilidad.dto.AsientoResponseDTO;
 import com.contabilidad.unapec.backend_contabilidad.model.Asiento;
 import com.contabilidad.unapec.backend_contabilidad.service.AsientoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,13 +24,13 @@ public class AsientoController {
 
     @GetMapping(produces = "application/json")
     @Operation(operationId = "listarAsientos", summary = "Listar todos los asientos")
-    public List<Asiento> listarTodos() {
+    public List<AsientoResponseDTO> listarTodos() {
         return service.findAll();
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
     @Operation(operationId = "obtenerAsientoPorId", summary = "Obtener un asiento por ID")
-    public ResponseEntity<Asiento> obtenerPorId(@PathVariable Long id) {
+    public ResponseEntity<AsientoResponseDTO> obtenerPorId(@PathVariable Long id) {
         return ResponseEntity.ok(service.getById(id));
     }
 

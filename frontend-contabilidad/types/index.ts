@@ -71,9 +71,18 @@ export interface CreateCuentaPayload {
 export type UpdateCuentaPayload = Partial<CreateCuentaPayload>;
 
 // ─── Asiento Contable ────────────────────────────────────────────────────────
+/**
+ * Refleja la forma del AsientoResponseDTO del backend.
+ * Los detalles usan campos planos (cuentaCodigo / cuentaNombre) en lugar del
+ * objeto CuentaContable anidado para evitar dependencias circulares en el DTO.
+ */
 export interface AsientoDetalle {
   id?: number;
-  cuenta: CuentaContable | null;    // Backend sends nested, @JsonIgnore only on asiento back-ref
+  // Campos planos que vienen del DTO (DetalleResumen)
+  cuentaCodigo?: string;
+  cuentaNombre?: string;
+  // Compatibilidad con el objeto anidado que puede llegar en otros contextos
+  cuenta?: CuentaContable | null;
   tipoMovimiento: "Debito" | "Credito";
   monto: number;
 }
@@ -95,10 +104,21 @@ export interface Asiento {
   montoTotalDop?: number;
   estado: boolean;                   // Backend uses boolean (true=active, false=anulado)
   detalles: AsientoDetalle[];
-  moneda?: Moneda | null;            // Backend sends nested object (was monedaId)
   tasaCambio?: number;
-  auxiliar?: { id: number; nombre?: string } | null;  // Backend sends nested (was auxiliarId)
   referencia?: string;               // Not in backend model, kept for form compatibility
+  // ── Objetos anidados enriquecidos (vienen del AsientoResponseDTO) ──────────
+  auxiliar?: {
+    id: number;
+    nombre: string;
+    descripcion?: string;
+  } | null;
+  moneda?: {
+    id: number;
+    codigoIso: string;
+    nombre: string;
+    simbolo: string;
+    tasaCambio?: number;
+  } | null;
 }
 
 export interface CreateAsientoPayload {

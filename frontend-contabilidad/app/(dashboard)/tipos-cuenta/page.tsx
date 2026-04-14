@@ -71,11 +71,20 @@ export default function TiposCuentaPage() {
     { header: "Descripción", accessor: "descripcion" },
     {
       header: "Origen (Naturaleza)",
-      accessor: (t) => (
-        <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${t.origen === "Debito" ? "bg-blue-50 text-blue-700" : "bg-red-50 text-red-700"}`}>
-          {t.origen}
-        </span>
-      ),
+      accessor: (t) => {
+        const val = (t.origen ?? "").toUpperCase();
+        const styles =
+          val === "DEBITO"
+            ? "bg-green-100 text-green-700"
+            : val === "CREDITO"
+            ? "bg-red-100 text-red-700"
+            : "bg-gray-100 text-gray-600";
+        return (
+          <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${styles}`}>
+            {t.origen}
+          </span>
+        );
+      },
       exportValue: (t) => t.origen,
       width: "150px"
     },
