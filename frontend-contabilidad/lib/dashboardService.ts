@@ -7,7 +7,8 @@ export interface DashboardStats {
 
 export const fetchMonthlyStats = async (): Promise<DashboardStats[]> => {
   try {
-    const response = await fetch('http://localhost:8080/api/dashboard/stats/monthly');
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
+    const response = await fetch(`${apiBase}/api/dashboard/stats/monthly`);
     if (!response.ok) {
       throw new Error(`Error fetching dashboard stats: ${response.statusText}`);
     }
