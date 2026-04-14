@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { BarChart3, TrendingUp, TrendingDown, Scale, Download, RefreshCw, Calendar } from "lucide-react";
 import Header from "@/components/layout/Header";
 import { BentoCard } from "@/components/ui/BentoCard";
@@ -44,11 +44,23 @@ function buildBalanza(cuentasDb: CuentaContable[], asientosDb: Asiento[]): FilaB
       const origen = (c.tipo && typeof c.tipo === "object" ? c.tipo.origen : "")?.toUpperCase();
       const esDeudora = origen === "DEBITO";
 
+      // Normalize tipo to match the TipoCuenta enum values exactly
+      const rawTipo = (getTipoNombre(c.tipo) || "ACTIVO").toString().toUpperCase().trim();
+      // Map plurals / aliases coming from the API to the canonical singular form
+      const TIPO_MAP: Record<string, TipoCuenta> = {
+        ACTIVO: "ACTIVO", ACTIVOS: "ACTIVO",
+        PASIVO: "PASIVO", PASIVOS: "PASIVO",
+        PATRIMONIO: "PATRIMONIO",
+        INGRESO: "INGRESO", INGRESOS: "INGRESO",
+        GASTO: "GASTO",   GASTOS: "GASTO", COSTO: "GASTO", COSTOS: "GASTO",
+      };
+      const tipoNormalizado: TipoCuenta = TIPO_MAP[rawTipo] ?? "ACTIVO";
+
       return {
         cuentaId: c.id,
         codigo: c.codigo,
         nombre: c.nombre,
-        tipo: (getTipoNombre(c.tipo) || "ACTIVO") as TipoCuenta,
+        tipo: tipoNormalizado,
         saldoAnterior: 0,
         movimientosDebe: debe,
         movimientosHaber: haber,
@@ -84,12 +96,39 @@ export default function ReportesPage() {
     setClientDate(new Date().toLocaleString("es-DO"));
   }, [generate]);
 
-  const totalDebe = filas.reduce((s, f) => s + f.movimientosDebe, 0);
-  const totalHaber = filas.reduce((s, f) => s + f.movimientosHaber, 0);
-  const totalActivos = filas.filter(f => f.tipo === "ACTIVO").reduce((s, f) => s + f.saldoFinal, 0);
-  const totalIngresos = filas.filter(f => f.tipo === "INGRESO").reduce((s, f) => s + f.saldoFinal, 0);
-  const totalGastos = filas.filter(f => f.tipo === "GASTO").reduce((s, f) => s + f.saldoFinal, 0);
-  const utilidad = totalIngresos - totalGastos;
+  /**
+   * Converts any value coming from the API to a safe number.
+   * Handles: number, string with currency symbols ("RD$ 1,234.56"), null, undefined.
+   */
+  const toNum = (v: unknown): number => {
+    if (typeof v === "number") return isNaN(v) ? 0 : v;
+    if (typeof v === "string") {
+      // Strip currency symbols, thousand separators, and spaces; replace comma-decimal to dot
+      const clean = v.replace(/[^0-9.,-]/g, "").replace(/,(?=\d{3})/g, "").replace(",", ".");
+      const parsed = parseFloat(clean);
+      return isNaN(parsed) ? 0 : parsed;
+    }
+    return 0;
+  };
+
+  // ── useMemo: recalculates only when `filas` reference changes ─────────────
+  const { totalDebe, totalHaber, totalActivos, totalIngresos, totalGastos, utilidad } = useMemo(() => {
+    const totalDebe     = filas.reduce((s, f) => s + toNum(f.movimientosDebe),  0);
+    const totalHaber    = filas.reduce((s, f) => s + toNum(f.movimientosHaber), 0);
+    const totalActivos  = filas
+      .filter(f => f.tipo === "ACTIVO")
+      .reduce((s, f) => s + toNum(f.saldoFinal), 0);
+    const totalIngresos = filas
+      .filter(f => f.tipo === "INGRESO")
+      .reduce((s, f) => s + toNum(f.saldoFinal), 0);
+    const totalGastos   = filas
+      .filter(f => f.tipo === "GASTO")          // COSTO/COSTOS already normalized to GASTO in buildBalanza
+      .reduce((s, f) => s + toNum(f.saldoFinal), 0);
+    const utilidad      = totalIngresos - totalGastos;
+
+    return { totalDebe, totalHaber, totalActivos, totalIngresos, totalGastos, utilidad };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filas]);
 
   const exportPDF = () => {
     const doc = new jsPDF("l", "pt", "a4");
