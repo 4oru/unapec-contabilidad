@@ -87,18 +87,38 @@ export default function DashboardPage() {
 
   // ── Derived / memoized KPIs ────────────────────────────────────────────────
   const kpis = useMemo(() => {
-    const totalIngresos = mensual.reduce((s, m) => s + Number(m.ingresos ?? 0), 0);
-    const totalGastos   = mensual.reduce((s, m) => s + Number(m.gastos   ?? 0), 0);
+    const toNum = (v: any) => Number(v) || 0;
+    const totalIngresos = mensual.reduce((s, m) => s + toNum(m.ingresos), 0);
+    const totalGastos   = mensual.reduce((s, m) => s + toNum(m.gastos), 0);
     const resultadoNeto = totalIngresos - totalGastos;
 
-    // Activos: cuentas hoja cuyo tipo empieza con "ACTIVO"
-    const getSaldo = (c: CuentaContable) => Number((c as any).balance ?? (c as any).saldo ?? 0) || 0;
-    const totalActivos = cuentas
-      .filter(c => getTipoNombre(c.tipo).toUpperCase().startsWith("ACTIVO") && c.permiteMovimiento)
-      .reduce((s, c) => s + getSaldo(c), 0);
+    // Activos dinámicos: sumar movimientos (Debe - Haber) de cuentas tipo ACTIVO
+    let totalActivos = 0;
+    const codigosActivos = new Set(
+      cuentas
+        .filter(c => getTipoNombre(c.tipo).toUpperCase().startsWith("ACTIVO") && c.permiteMovimiento)
+        .map(c => c.codigo)
+    );
+
+    asientos.forEach((a) => {
+      // Ignorar asientos inactivos/anulados
+      if (a.estado === false) return; 
+
+      (a.detalles || []).forEach((d) => {
+        const codigo = d.cuentaCodigo ?? d.cuenta?.codigo;
+        if (codigo && codigosActivos.has(codigo)) {
+          const monto = toNum(d.monto);
+          if (d.tipoMovimiento === "Debito") {
+            totalActivos += monto;
+          } else if (d.tipoMovimiento === "Credito") {
+            totalActivos -= monto;
+          }
+        }
+      });
+    });
 
     return { totalIngresos, totalGastos, resultadoNeto, totalActivos };
-  }, [mensual, cuentas]);
+  }, [mensual, cuentas, asientos]);
 
   // Stats secundarias
   const monedasActivas  = monedas.filter(m => m.estado).length;

@@ -31,26 +31,35 @@ public class DashboardService {
         }
 
         for (Asiento asiento : asientos) {
+            // Ignorar asientos anulados
+            if (asiento.getEstado() != null && !asiento.getEstado()) continue;
+
             int month = asiento.getFechaAsiento().getMonthValue();
             DashboardStatsDTO dto = statsMap.get(month);
             
             if (asiento.getDetalles() == null) continue;
 
             for (AsientoDetalle detalle : asiento.getDetalles()) {
-                if (detalle.getCuenta() == null || detalle.getMonto() == null) continue;
+                if (detalle.getCuenta() == null || detalle.getCuenta().getTipo() == null || detalle.getMonto() == null) continue;
                 
-                String codigo = detalle.getCuenta().getCodigo();
+                String tipoNombre = detalle.getCuenta().getTipo().getNombre().toUpperCase();
                 BigDecimal tasa = asiento.getTasaCambio() != null ? asiento.getTasaCambio() : BigDecimal.ONE;
                 BigDecimal montoDop = detalle.getMonto().multiply(tasa);
 
-                if (codigo != null) {
-                    // Ingresos: Cuentas que empiezan con 4
-                    if (codigo.startsWith("4")) {
+                boolean isDebito = "Debito".equalsIgnoreCase(detalle.getTipoMovimiento());
+                boolean isCredito = "Credito".equalsIgnoreCase(detalle.getTipoMovimiento());
+
+                if (tipoNombre.contains("INGRESO")) {
+                    if (isCredito) {
                         dto.setIngresos(dto.getIngresos().add(montoDop));
-                    } 
-                    // Gastos: Cuentas que empiezan con 5 o 6
-                    else if (codigo.startsWith("5") || codigo.startsWith("6")) {
+                    } else if (isDebito) {
+                        dto.setIngresos(dto.getIngresos().subtract(montoDop));
+                    }
+                } else if (tipoNombre.contains("GASTO") || tipoNombre.contains("COSTO")) {
+                    if (isDebito) {
                         dto.setGastos(dto.getGastos().add(montoDop));
+                    } else if (isCredito) {
+                        dto.setGastos(dto.getGastos().subtract(montoDop));
                     }
                 }
             }
